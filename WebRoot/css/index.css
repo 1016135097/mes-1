@@ -1,0 +1,66 @@
+body {
+	background-repeat: no-repeat;
+	background-color: #F3E4C2;
+}
+
+a:link {
+	color: #285171;
+}
+
+a:visited {
+	color: #285171;
+}
+
+a:hover {
+	color: #00ABD8;
+}
+
+.leftbanner {
+	width: 750px;
+	height: 650px;
+	float: left;
+	position: relative;
+	background-image: url(../img/resumebg.png);
+	background-repeat: no-repeat;
+}
+
+.right {
+	width: 320px;
+	height: 200px;
+	float: left;
+}
+
+.bold {
+	font-family: "MS Serif", "New York", serif;
+	font-size: 20px;
+	font-style: normal;
+	font-weight: bold;
+}
+
+#insert {
+	font-family: "MS Serif", "New York", serif;
+	font-size: 18px;
+	text-decoration: none;
+	color: #0067A6;
+}
+
+.email {
+	position: absolute;
+	top: 330px;
+	height: 30px;
+	line-height: 30px;
+	left: 268px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 22px;
+	font-style: normal;
+	text-decoration: underline;
+	text-align: center;
+}
+
+.right #right {
+	background-repeat: no-repeat;
+	margin-top: 50px;
+	margin-right: 0px;
+	margin-bottom: 50px;
+	margin-left: 0px;
+}
