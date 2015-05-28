@@ -24,7 +24,7 @@ public class Tooling {
 	
 	private int amount;//工具总量
 
-	@OneToMany(mappedBy = "tooling", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "tooling", cascade = { CascadeType.MERGE }, fetch = FetchType.LAZY)
 	private Set<BOM> boms = new HashSet<BOM>();
 
 	@OneToMany(mappedBy = "tooling", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)

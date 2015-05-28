@@ -13,11 +13,11 @@ public class BOM {
 	@GeneratedValue
 	private int id;
 
-	@ManyToOne(cascade = { CascadeType.ALL })
+	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH })
 	private Pdoc pdoc;
 
 	// 对应的tooling
-	@ManyToOne(cascade = { CascadeType.ALL })
+	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH })
 	private Tooling tooling;
 
 	// 这个tooling的需求个数

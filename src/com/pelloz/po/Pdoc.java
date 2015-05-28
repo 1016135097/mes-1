@@ -30,7 +30,7 @@ public class Pdoc {
 	private UserInfo userinfo;
 
 	// 工艺文件中对应的BOM表
-	@OneToMany(mappedBy = "pdoc", cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "pdoc", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	private Set<BOM> boms = new HashSet<BOM>();
 
 	@OneToMany(mappedBy = "pdoc", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)

@@ -20,9 +20,9 @@ public class ProductionPlan {
 	private boolean isOnPlan;// 是否已经提交计划
 	private boolean isOnProducing;// 是否正在生产
 
-	@ManyToOne(cascade = { CascadeType.ALL })
+	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH })
 	private UserInfo userinfo;// 计划员
-	@OneToOne(cascade = { CascadeType.ALL })
+	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH })
 	private Pdoc pdoc;// 工艺文件
 
 	public int getId() {

@@ -19,10 +19,10 @@ public class OrderForm {
 	private double price;// 单价
 	private Date date;// 订单预计完成时间
 
-	@ManyToOne(cascade = { CascadeType.ALL })
+	@ManyToOne(cascade = { CascadeType.MERGE })
 	private UserInfo userinfo;// 订单发起人
 
-	@ManyToOne(cascade = { CascadeType.ALL })
+	@ManyToOne(cascade = { CascadeType.MERGE })
 	private Tooling tooling;// 订单需要购买的物品
 
 	public int getId() {
