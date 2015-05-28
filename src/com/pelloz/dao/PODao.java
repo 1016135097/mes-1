@@ -10,12 +10,19 @@ import java.io.Serializable;
  * @param <T>
  */
 interface PODao<T> {
+	
+	public void save(T pobject);
 
-	public void add(T pobject);
+	public void persist(T pobject);
+
+	public void update(T pobject);
+
+	public void merge(T pobject);
+
+	public T load(Serializable id);
+
+	public T get(Serializable id);
 
 	public void delete(T pobject);
 
-	public void modify(T pobject);
-
-	public T find(Serializable id);
 }

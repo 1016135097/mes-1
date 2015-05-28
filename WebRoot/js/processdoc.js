@@ -198,12 +198,14 @@ var gridForm = new Ext.FormPanel({
 									case 'add':
 										textfieldid.reset();
 										textfieldid.disable();
+										textfieldtitle.enable();
 										textfieldcontent.enable();
 										textfieldauthor.reset();
 										textfieldauthor.disable();
 										break;
 									case 'modify':
 										textfieldid.enable();
+										textfieldtitle.enable();
 										textfieldcontent.enable();
 										textfieldauthor.reset();// 谁更改谁负责，不能指定作者
 										textfieldauthor.disable();
@@ -216,6 +218,7 @@ var gridForm = new Ext.FormPanel({
 										break;
 									case 'find':
 										textfieldid.enable();
+										textfieldtitle.enable();
 										textfieldcontent.disable();
 										textfieldcontent.reset();
 										textfieldauthor.enable();

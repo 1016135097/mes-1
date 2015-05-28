@@ -22,7 +22,7 @@ public class UserDaoImpl implements UserDao {
 	private HibernateTemplate hibernateTemplate;
 
 	@Override
-	public void add(UserInfo userInfo) {
+	public void save(UserInfo userInfo) {
 
 		hibernateTemplate.save(userInfo);
 
@@ -36,18 +36,41 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public void modify(UserInfo userInfo) {
-		// update必须是从数据库中取出来的对象在更改后update，一直处于session管控之下
-		// merge可以是用户自己new出来的对象，然后更新覆盖到数据库中，是脱管的
-		// this.hibernateTemplate.update(user);
+	public void merge(UserInfo userInfo) {
+		//当我们使用update的时候，执行完成后，我们提供的对象A的状态变成持久化状态
+		//但当我们使用merge的时候，执行完成，我们提供的对象A还是脱管状态
 		hibernateTemplate.merge(userInfo);
 
 	}
 
 	@Override
-	public UserInfo find(Serializable id) {
+	public UserInfo get(Serializable id) {
+		
 		UserInfo userInfo = hibernateTemplate.get(UserInfo.class, id);
 		return userInfo;
+		
+	}
+	
+	@Override
+	public UserInfo load(Serializable id) {
+		
+		UserInfo userInfo = hibernateTemplate.load(UserInfo.class, id);
+		return userInfo;
+		
+	}
+	
+	@Override
+	public void persist(UserInfo pdoc) {
+		
+		hibernateTemplate.persist(pdoc);
+		
+	}
+
+	@Override
+	public void update(UserInfo pdoc) {
+
+		hibernateTemplate.update(pdoc);
+		
 	}
 
 	@SuppressWarnings("unchecked")

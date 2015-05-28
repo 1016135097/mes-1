@@ -48,11 +48,17 @@ public class UserController {
 
 	@AuthPassport(department = { "admin" })
 	@RequestMapping(params = "method=add")
-	public String add(String username, ModelMap map) {
+	public String add(String username, String password, String fullname, String department, String title, ModelMap map) {
+
+		UserInfo userinfo = new UserInfo();
+		userinfo.setUsername(username);
+		userinfo.setPassword(password);
+		userinfo.setFullname(fullname);
+		userinfo.setDepartment(department);
+		userinfo.setTitle(title);
 		try {
-			userService.add(username, "1", "2", "3", "4");
+			userService.add(userinfo);
 		} catch (POExistException e) {
-			System.out.println(e.getMessage());
 			map.clear();
 			map.addAttribute("errmsg", e.getMessage());
 			return "err/err.jsp";
@@ -66,7 +72,6 @@ public class UserController {
 		try {
 			userService.delete(id);
 		} catch (NoSuchPOException e) {
-			System.out.println(e.getMessage());
 			req.setAttribute("errmsg", e.getMessage());
 			return "err/err.jsp";
 		}
@@ -74,25 +79,27 @@ public class UserController {
 	}
 
 	@RequestMapping(params = "method=modify")
-	public String modify(int id, HttpServletRequest req) {
-		UserInfo userinfo = new UserInfo();
+	public String modify(int id, String username, String password, String fullname, String department, String title,
+			HttpServletRequest req) {
+		
+		UserInfo userinfo;
 		try {
-			userinfo.setId(id);
-			userinfo.setUsername("123");
-			userinfo.setPassword("123");
-			userinfo.setFullname("123");
-			userinfo.setDepartment("123");
-			userinfo.setTitle("123");
-
+			userinfo = userService.find(id);
+			userinfo.setUsername(username);
+			userinfo.setPassword(password);
+			userinfo.setFullname(fullname);
+			userinfo.setDepartment(department);
+			userinfo.setTitle(title);
 			userService.modify(userinfo);
+			
 		} catch (NoSuchPOException e) {
-			System.out.println(e.getMessage());
 			req.setAttribute("errmsg", e.getMessage());
 			return "err/err.jsp";
 		} catch (POExistException e) {
-
-			e.printStackTrace();
+			req.setAttribute("errmsg", e.getMessage());
+			return "err/err.jsp";
 		}
+		
 		return "webpage/system.jsp";
 	}
 
