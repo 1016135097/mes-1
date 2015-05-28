@@ -25,12 +25,12 @@ public class UserController {
 
 	// 登录判断
 	@RequestMapping(params = "method=login")
-	public String login(String username, String password,
-			HttpServletRequest req, HttpServletResponse resp) {
+	public String login(String username, String password, HttpServletRequest req) {
+
 		List<UserInfo> userinfos;
 		UserInfo userinfo;
 		try {
-			userinfos = this.userService.find(username, "username");
+			userinfos = this.userService.find("username", username);
 			userinfo = userinfos.get(0);
 			if (userinfo.getPassword().equals(password)) {
 				req.getSession().setAttribute("user", userinfo);
@@ -38,13 +38,11 @@ public class UserController {
 				return "redirect:main.jsp";
 			} else {
 				req.getSession().invalidate();
-				req.setAttribute("loginmsg", "密码:" + "不正确");
-				return "forward:index.jsp";
+				return "redirect:index.jsp?loginmsg=-1";// 密码不正确
 			}
 		} catch (NoSuchPOException e) {
 			req.getSession().invalidate();
-			req.setAttribute("loginmsg", "账号:" + "不存在");
-			return "forward:index.jsp";
+			return "redirect:index.jsp?loginmsg=-2";// 账号不存在
 		}
 	}
 
@@ -91,6 +89,9 @@ public class UserController {
 			System.out.println(e.getMessage());
 			req.setAttribute("errmsg", e.getMessage());
 			return "err/err.jsp";
+		} catch (POExistException e) {
+
+			e.printStackTrace();
 		}
 		return "webpage/system.jsp";
 	}
@@ -115,7 +116,7 @@ public class UserController {
 	public String find(String param, String by, HttpServletRequest req) {
 		List<UserInfo> userinfos;
 		try {
-			userinfos = this.userService.find(param, by);
+			userinfos = this.userService.find(by, param);
 
 		} catch (NoSuchPOException e) {
 			req.getSession().setAttribute("errmsg", e.getMessage());

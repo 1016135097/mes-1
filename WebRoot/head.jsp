@@ -23,10 +23,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		
 		<div class="msgbar">
 			<div style="float: left; padding: 0px; margin: 0px; width: 500px;">
-				&nbsp;账号：${user.username}&nbsp;&nbsp;部门：${user.department}&nbsp;&nbsp;职称：${user.title}&nbsp;&nbsp;
+				账号：${user.username}&nbsp;&nbsp;部门：${user.department}&nbsp;&nbsp;职称：${user.title}&nbsp;&nbsp;
 		  </div>
-			<div style="text-align: right; width: 300px; float: right;">
-				现在时间&nbsp;<span id="localtime"></span>
+			<div style="text-align: right; width: 350px; float: right;">
+				现在时间<span id="localtime"></span>
 				<script>tick('localtime');</script>
 			</div>
 		</div>

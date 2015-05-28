@@ -23,29 +23,33 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 				return true;
 			} else {
 				// 实现权限验证逻辑
-				Boolean isAuthorised;
+				response.setCharacterEncoding("utf-8");//防止中文乱码
+				response.setContentType("text/html; charset=utf-8");
+				Boolean isAuthorised = false; //默认无权限
 				String department;
 				UserInfo userInfo = (UserInfo) request.getSession().getAttribute("user");
 				if (userInfo != null) {
 					department = userInfo.getDepartment();
 				} else {
 					request.getSession().setAttribute("errmsg", "没有权限");
-					response.sendRedirect("err.jsp");
+					response.sendRedirect("err/err.jsp");
 					return false;
 				}
-				if (authPassport.department()[0].equalsIgnoreCase(department)) {
-					isAuthorised = true;
-				} else {
-					isAuthorised = false;
+				
+				for (int i = 0; i < authPassport.department().length; i++) {
+					if(authPassport.department()[i].equals(department)){
+						isAuthorised = true;
+						break;
+					}
 				}
 
-				if (isAuthorised)// 如果验证成功返回true（这里直接写false来模拟验证失败的处理）
+				if (isAuthorised)
 					return true;
 				else// 如果验证失败
 				{
 					// 返回到错误界面
 					request.getSession().setAttribute("errmsg", "没有权限");
-					response.sendRedirect("err.jsp");
+					response.sendRedirect("err/err.jsp");
 					return false;
 				}
 			}

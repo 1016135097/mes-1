@@ -16,7 +16,7 @@ interface POService<T> {
 	
 	public void delete(T pobject) throws NoSuchPOException;
 	
-	public void modify(T pobject) throws NoSuchPOException;
+	public void modify(T pobject) throws NoSuchPOException, POExistException;
 	
 	public T find(Serializable id) throws NoSuchPOException;
 	

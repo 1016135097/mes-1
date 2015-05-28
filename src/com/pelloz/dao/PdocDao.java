@@ -6,6 +6,8 @@ import com.pelloz.po.Pdoc;
 
 public interface PdocDao extends PODao<Pdoc>{
 	
-	public List<Pdoc> find(String param, String paramname);
+	public List<Pdoc> find(String paramname, Object param);
+
+	public List<Pdoc> findLike(String paramname, String param);
 	
 }

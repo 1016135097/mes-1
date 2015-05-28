@@ -6,13 +6,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 <%
 	UserInfo user = (UserInfo)session.getAttribute("user");
-	
 	if(user==null){
 		out.print("<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head><body><h1>请先登录</h1></body>");
 		return;
 	}
-	
-	System.out.println(user.getId()+user.getUsername()+user.getDepartment());
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -32,57 +29,47 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<script type="text/javascript" src="ext/ext-all.js"></script>
 
 		<script type="text/javascript" src="ext/ext-lang-zh_CN.js"></script>
-
+		
 		<script type="text/javascript" src="js/pelloz.js"></script>
 
-<style type="text/css">
-	html,body {
-		font: normal 12px verdana;
-		margin: 0;
-		padding: 0;
-		border: 0 none;
-		overflow: hidden;
-		height: 100%;
-	}
-	
-	.empty .x-panel-body {
-		padding-top: 0;
-		text-align: center;
-		font-style: italic;
-		color: gray;
-		font-size: 11px;
-	}
-	
-	.x-btn button {
-		font-size: 14px;
-	}
-	
-	.x-panel-header {
-		font-size: 14px;
-	}
-</style>
-
+		<script type="text/javascript" src="js/processdoc.js"></script>
+		<!-- //TODO 通过JSP脚本动态指定需要加载的js文件 -->
 <script type="text/javascript">
+
 	Ext.onReady( function() {
+
+		Ext.QuickTips.init();
+		Ext.form.Field.prototype.msgTarget = 'side';
 
 		var addPanel = function(btn, event) {
 			var n;
 			n = tabPanel.getComponent(btn.id);
 			if(n) {
+				n.show();
 				tabPanel.setActiveTab(n);
 				return;
 			}
-			n = tabPanel.add( {
-				id : btn.id,
-				title : btn.text,
-				//html : '<iframe width=100% height=100% src="webpage/' + btn.id + '.jsp" />',
-				autoLoad : 'webpage/' + btn.id + '.jsp',
-				autoScroll : true,
-				closable : 'true'
-			});
-			
-			tabPanel.setActiveTab(n);
-			//Ext.Msg.alert('ext',' "webpage/' + btn.id + '" ');
+			switch(btn.id)
+			{
+			case 'processdoc': processdoc(tabPanel,btn);
+			  break;
+			case 'bom':bom(tabPanel,btn);
+			  break;
+			case 'productplan':productplan(tabPanel,btn);
+				  break;
+			case 'productarrange':productarrange(tabPanel,btn);
+				  break;
+			case 'fixturemanage':fixturemanage(tabPanel,btn);
+				  break;
+			case 'inventory':inventory(tabPanel,btn);
+				  break;
+			case 'buyingrequire':buyingrequire(tabPanel,btn);
+				  break;
+			case 'system': system(tabPanel,btn);
+				  break;
+			default:;
+				break;
+			}
 		}
 		
 		var msgalert = function(btn, event) {
@@ -284,7 +271,7 @@ var item5 = new Ext.Panel( {
 
 		var accordion = new Ext.Panel( {
 			region : 'west',
-			margins : '5 0 5 5',
+			margins : '5 5 5 5',
 			split : true,
 			width : 210,
 			layout : 'accordion',

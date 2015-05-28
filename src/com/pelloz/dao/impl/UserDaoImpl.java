@@ -5,7 +5,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.stereotype.Component;
@@ -49,7 +51,8 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<UserInfo> find(String param, String paramname) {
+	@Override
+	public List<UserInfo> find(String paramname, Object param) {
 
 		if (paramname.equalsIgnoreCase("password")) {
 			return null;// 禁止穷举密码
@@ -58,7 +61,27 @@ public class UserDaoImpl implements UserDao {
 		List<UserInfo> userInfos;
 		DetachedCriteria detachedCriteria = DetachedCriteria
 				.forClass(UserInfo.class);
-		detachedCriteria.add(Restrictions.like(paramname, param));
+		detachedCriteria.add(Restrictions.eq(paramname, param));
+		detachedCriteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		userInfos = (List<UserInfo>) this.hibernateTemplate
+				.findByCriteria(detachedCriteria);
+
+		return userInfos;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<UserInfo> findLike(String paramname, String param) {
+
+		if (paramname.equalsIgnoreCase("password")) {
+			return null;// 禁止穷举密码
+		}
+
+		List<UserInfo> userInfos;
+		DetachedCriteria detachedCriteria = DetachedCriteria
+				.forClass(UserInfo.class);
+		detachedCriteria.add(Restrictions.like(paramname, param, MatchMode.ANYWHERE));
+		detachedCriteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		userInfos = (List<UserInfo>) this.hibernateTemplate
 				.findByCriteria(detachedCriteria);
 

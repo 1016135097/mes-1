@@ -13,6 +13,8 @@ public interface UserService extends POService<UserInfo>{
 	
 	public void delete(Serializable id) throws NoSuchPOException;
 	
-	public List<UserInfo> find(String param, String paramname) throws NoSuchPOException;
+	public List<UserInfo> find(String paramname, Object param) throws NoSuchPOException;
+
+	public List<UserInfo> findLike(String paramname, String param) throws NoSuchPOException;
 	
 }

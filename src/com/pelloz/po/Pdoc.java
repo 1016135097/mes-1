@@ -26,7 +26,7 @@ public class Pdoc {
 	private String content;// 工艺文件内容
 
 	// 作者
-	@ManyToOne(cascade = { CascadeType.ALL })
+	@ManyToOne(cascade = { CascadeType.MERGE })
 	private UserInfo userinfo;
 
 	// 工艺文件中对应的BOM表
