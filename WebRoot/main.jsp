@@ -31,8 +31,31 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<script type="text/javascript" src="ext/ext-lang-zh_CN.js"></script>
 		
 		<script type="text/javascript" src="js/pelloz.js"></script>
-
-		<script type="text/javascript" src="js/processdoc.js"></script>
+		<!-- //TODO 通过JSP脚本动态指定需要加载的js文件 -->
+<%
+switch(user.getDepartment()){
+	case "admin": 
+		out.println("<script type='text/javascript' src='js/processdoc.js'></script>");
+		out.println("<script type='text/javascript' src='js/bom.js'></script>");
+	break;
+	case "工艺室": 
+		out.println("<script type='text/javascript' src='js/processdoc.js'></script>");
+		out.println("<script type='text/javascript' src='js/bom.js'></script>");
+	break;
+	case "车间生产": 
+		;
+	break;
+	case "工装室": 
+		;
+	break;
+	case "计划室": 
+		;
+	break;
+	case "采购部": 
+		;
+	break;
+}
+%>
 		<!-- //TODO 通过JSP脚本动态指定需要加载的js文件 -->
 <script type="text/javascript">
 
@@ -297,7 +320,7 @@ var item5 = new Ext.Panel( {
 			    minSize: 75,
 			    maxSize: 250,
 			    cmargins: '5 0 0 0',
-			    scripts: true,
+			    //scripts: true,
 			    items : [ {
 					//title : 'top',
 					//autoLoad : 'head.jsp'

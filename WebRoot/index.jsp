@@ -126,5 +126,6 @@ body {
 		</div>
 	</div>
 </body>
+<script type="text/javascript" src="ext/adapter/ext/ext-base.js"></script>
 <script type="text/javascript" src="ext/ext-all.js"></script>
 </html>

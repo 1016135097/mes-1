@@ -1,15 +1,19 @@
-//processdoc中使用的全局变量
-var pdocXML
-var urlGetXmlPdoc = "processdoc.do?method=getpdocxmlstr";
-var urlPdoc = "processdoc.do";
+//可以全局替换的变量名 
+//bomXML bom getbomxmlstr bindBomXML dataStoreBom gridFormBom
+//submitBom resetBom refreshBom boms bom colModelBom bom-form
+
+//bom中使用的全局变量
+var bomXML;
+var urlGetXmlBom = "bom.do?method=getbomxmlstr";
+var urlBom = "bom.do";
 // 用于TabPanel的添加
-function processdoc(tabPanel, btn) {
+function bom(tabPanel, btn) {
 
 	var n = tabPanel.add({
 		id : btn.id,
 		title : btn.text,
 		layout : 'fit',
-		items : [ gridFormPdoc ],
+		items : [ gridFormBom ],
 
 		autoScroll : true,
 		closable : false
@@ -19,18 +23,16 @@ function processdoc(tabPanel, btn) {
 
 	tabPanel.setActiveTab(n);
 
-	// 更新pdocData,需要提前引用pelloz.js，服务器返回的是字符串形式的xml
-	ajaxGetText(urlGetXmlPdoc, bindPdocXML);
-
+	ajaxGetText(urlGetXmlBom, bindBomXML);
 }
 
-function bindPdocXML(xmlstr) {
-	pdocXML = loadXMLString(xmlstr);
-	dataStorePdoc.loadData(pdocXML);
+function bindBomXML(xmlstr) {
+	bomXML = loadXMLString(xmlstr);
+	dataStoreBom.loadData(bomXML);
 }
 
 // data bind
-var pdocs = Ext.data.Record.create([ {
+var boms = Ext.data.Record.create([ {
 	name : 'id'
 }, {
 	name : 'title'
@@ -40,42 +42,42 @@ var pdocs = Ext.data.Record.create([ {
 	name : 'author'
 } ]);
 
-var dataStorePdoc = new Ext.data.Store({
+var dataStoreBom = new Ext.data.Store({
 	reader : new Ext.data.XmlReader({
-		record : "pdoc",// The repeated element which contains row information
-	}, pdocs)
+		record : "bom",// TODO mark The repeated element which contains row information
+	}, boms)
 });
 
 // 主界面
-var colModelPdoc = new Ext.grid.ColumnModel([ {
-	id : 'pdocid',
+var colModelBom = new Ext.grid.ColumnModel([ {
+	id : 'bomid',
 	header : "编号",
 	width : 50,
 	sortable : true,
 	locked : false,
 	dataIndex : 'id'//用于和Ext.data.Record的元素name相对应
 }, {
-	id : 'pdoctitle',
+	id : 'bomtitle',
 	header : "标题",
 	width : 100,
 	sortable : true,
 	dataIndex : 'title'
 }, {
-	id : 'pdoccontent',
+	id : 'bomcontent',
 	header : "内容",
 	width : 300,
 	sortable : true,
 	dataIndex : 'content'
 }, {
-	id : 'pdocauthor',
+	id : 'bomauthor',
 	header : "作者",
 	width : 80,
 	sortable : true,
 	dataIndex : 'author'
 } ]);
 
-var gridFormPdoc = new Ext.FormPanel({
-	id : 'pdoc-form',
+var gridFormBom = new Ext.FormPanel({
+	id : 'bom-form',
 	frame : true,
 	labelAlign : 'left',
 	bodyStyle : 'padding:5px',
@@ -85,19 +87,19 @@ var gridFormPdoc = new Ext.FormPanel({
 		layout : 'fit',
 		items : {
 			xtype : 'grid',
-			ds : dataStorePdoc,
-			cm : colModelPdoc,
+			ds : dataStoreBom,
+			cm : colModelBom,
 			sm : new Ext.grid.RowSelectionModel({
 				singleSelect : true,
 				listeners : {
 					rowselect : function(sm, row, rec) {
-						Ext.getCmp("pdoc-form").getForm().loadRecord(rec);
+						Ext.getCmp("bom-form").getForm().loadRecord(rec);
 					}
 				}
 			}),
-			autoExpandColumn : 'pdoctitle',
+			autoExpandColumn : 'bomtitle',
 			height : 350,
-			title : '工艺文件列表',
+			title : '工艺文件列表1',
 			border : true,
 			listeners : {
 				render : function(g) {
@@ -112,7 +114,7 @@ var gridFormPdoc = new Ext.FormPanel({
 		columnWidth : 0.4,
 		xtype : 'fieldset',
 		labelWidth : 60,
-		title : '&nbsp;工艺详情',
+		title : '&nbsp;工艺详情1',
 		defaults : {
 			width : 300,
 			border : false
@@ -127,27 +129,27 @@ var gridFormPdoc = new Ext.FormPanel({
 		},
 		items : [ {
 			fieldLabel : '编号',
-			id : 'pdocid',
+			id : 'bomid',
 			name : 'id',
 			regex : /^\d+$/,
 			regexText : '编号只准输入正整数'
 
 		}, {
 			fieldLabel : '标题',
-			id : 'pdoctitle',
+			id : 'bomtitle',
 			name : 'title'
 		}, {
 			fieldLabel : '内容',
-			id : 'pdoccontent',
+			id : 'bomcontent',
 			name : 'content',
 			disabled : true
 		}, {
 			fieldLabel : '作者',
-			id : 'pdocauthor',
+			id : 'bomauthor',
 			name : 'author'
 		}, {
 			xtype : 'radiogroup',
-			id : 'method',
+			id : 'bommethod',
 			fieldLabel : '操作',
 			columns : 3,
 			allowBlank : false,
@@ -173,10 +175,10 @@ var gridFormPdoc = new Ext.FormPanel({
 			listeners : {
 				change : function(radiogroup, checkedradio) {
 
-					var textfieldid = Ext.getCmp("pdoc-form").getForm().findField('pdocid');
-					var textfieldtitle = Ext.getCmp("pdoc-form").getForm().findField('pdoctitle');
-					var textfieldauthor = Ext.getCmp("pdoc-form").getForm().findField('pdocauthor');
-					var textfieldcontent = Ext.getCmp("pdoc-form").getForm().findField('pdoccontent');
+					var textfieldid = Ext.getCmp("bom-form").getForm().findField('bomid');
+					var textfieldtitle = Ext.getCmp("bom-form").getForm().findField('bomtitle');
+					var textfieldauthor = Ext.getCmp("bom-form").getForm().findField('bomauthor');
+					var textfieldcontent = Ext.getCmp("bom-form").getForm().findField('bomcontent');
 
 					switch (checkedradio.inputValue) {
 					case 'add':
@@ -219,28 +221,28 @@ var gridFormPdoc = new Ext.FormPanel({
 
 		buttons : [ {
 			text : '提交',
-			handler : submitPdoc
+			handler : submitBom
 		}, {
 			text : '清空',
-			handler : resetPdoc
+			handler : resetBom
 		}, {
 			text : '刷新列表',
-			handler : refreshPdoc
+			handler : refreshBom
 		} ]
 	} ]
 });
 
-function submitPdoc() {
+function submitBom() {
 
-	if (!gridFormPdoc.getForm().isValid())
+	if (!gridFormBom.getForm().isValid())
 		return;
 
-	var textfieldid = gridFormPdoc.getForm().findField('pdocid').getValue();
-	var textfieldtitle = gridFormPdoc.getForm().findField('pdoctitle').getValue();
-	var textfieldauthor = gridFormPdoc.getForm().findField('pdocauthor').getValue();
-	var textfieldcontent = gridFormPdoc.getForm().findField('pdoccontent').getValue();
+	var textfieldid = gridFormBom.getForm().findField('bomid').getValue();
+	var textfieldtitle = gridFormBom.getForm().findField('bomtitle').getValue();
+	var textfieldauthor = gridFormBom.getForm().findField('bomauthor').getValue();
+	var textfieldcontent = gridFormBom.getForm().findField('bomcontent').getValue();
 
-	switch (gridFormPdoc.getForm().findField('method').getValue().inputValue) {
+	switch (gridFormBom.getForm().findField('bommethod').getValue().inputValue) {
 	case 'add':
 		if (textfieldid != '') {
 			Ext.Msg.alert('提示', '添加工艺不能指定编号');
@@ -283,21 +285,21 @@ function submitPdoc() {
 		break;
 	}
 
-	if (gridFormPdoc.getForm().findField('method').getValue().inputValue == 'find') {
-		url = urlPdoc + "?method=find&id=" + textfieldid + "&title=" + textfieldtitle + "&author=" + textfieldauthor;
-		ajaxGetText(url, bindPdocXML);
+	if (gridFormBom.getForm().findField('bommethod').getValue().inputValue == 'find') {
+		url = urlBom + "?method=find&id=" + textfieldid + "&title=" + textfieldtitle + "&author=" + textfieldauthor;
+		ajaxGetText(url, bindBomXML);
 		return;
 	}
 
-	gridFormPdoc.getForm().submit({
+	gridFormBom.getForm().submit({
 		waitMsg : '正在提交数据，超时不动请刷新页面，或者重新登录',
 		waitTitle : '提示',
-		url : urlPdoc,
+		url : urlBom,
 		method : 'POST',
 		success : function(form, action) {
 			try {
 				Ext.Msg.alert('提示', '保存成功');
-				ajaxGetText(urlGetXmlPdoc, bindPdocXML);
+				ajaxGetText(urlGetXmlBom, bindBomXML);
 			} catch (e) {
 				Ext.Msg.alert('提示', '服务器返回数据错误或者权限不足');
 			}
@@ -312,10 +314,10 @@ function submitPdoc() {
 	});
 }
 
-function resetPdoc() {
-	gridFormPdoc.getForm().reset();
+function resetBom() {
+	gridFormBom.getForm().reset();
 }
 
-function refreshPdoc() {
-	ajaxGetText(urlGetXmlPdoc, bindPdocXML);
+function refreshBom() {
+	ajaxGetText(urlGetXmlBom, bindBomXML);
 }

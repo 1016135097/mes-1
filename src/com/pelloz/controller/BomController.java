@@ -30,8 +30,8 @@ import com.pelloz.service.UserService;
  *
  */
 @Controller
-@RequestMapping("/processdoc.do")
-public class ProcessDocController {
+@RequestMapping("/bom.do")
+public class BomController {
 
 	@Resource
 	private UserService userService;
@@ -76,7 +76,7 @@ public class ProcessDocController {
 	}
 
 	@AuthPassport(department = { "admin", "工艺室" })
-	@RequestMapping(params = "method=getpdocxmlstr")
+	@RequestMapping(params = "method=getbomxmlstr")
 	public void getPdocXMLStr(HttpServletRequest req, HttpServletResponse resp) {
 
 		// 取得操作用户
@@ -191,7 +191,7 @@ public class ProcessDocController {
 			returnXML(pdocs, resp);
 			return;
 		}
-		
+
 		//最后都找不到
 		pdocs.add(pdocerr);
 		returnXML(pdocs, resp);
@@ -291,11 +291,11 @@ public class ProcessDocController {
 	private void returnXML(List<Pdoc> pdocs, HttpServletResponse resp) {
 		// 生成XML
 		Document document = DocumentHelper.createDocument();
-		Element rootpdocs = document.addElement("pdocs");
+		Element rootpdocs = document.addElement("boms");
 		for (Pdoc pdoc : pdocs) {
-			Element rootpdoc = rootpdocs.addElement("pdoc");
-			rootpdoc.addElement("id").addText(String.valueOf(pdoc.getId()));//TODO 我觉得还是应该改到id
-			rootpdoc.addElement("title").addText(pdoc.getTitle());//TODO 因为已经在上一级确定是属于pdoc了
+			Element rootpdoc = rootpdocs.addElement("bom");
+			rootpdoc.addElement("id").addText(String.valueOf(pdoc.getId()));
+			rootpdoc.addElement("title").addText(pdoc.getTitle());
 			rootpdoc.addElement("content").addText(pdoc.getContent());
 			rootpdoc.addElement("author").addText(pdoc.getUserinfo().getFullname());
 
