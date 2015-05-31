@@ -12,15 +12,24 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.stereotype.Component;
 
+import com.pelloz.dao.DaoImplHelper;
 import com.pelloz.dao.PdocDao;
 import com.pelloz.po.Pdoc;
 
 @Component
-public class PdocDaoImpl implements PdocDao {
+public class PdocDaoImpl extends DaoImplHelper<Pdoc> implements PdocDao {
+
 
 	@Resource
 	private HibernateTemplate hibernateTemplate;
-
+	
+	/**
+	 * 按DaoImplHelper<T>的要求使用构造函数将Pdoc.class传入
+	 */
+	public PdocDaoImpl() {
+		super(Pdoc.class);
+	}
+	
 	@Override
 	public void save(Pdoc pdoc) {
 		// 它会立即执行Sql insert，不管是不是在transaction内部还是外部

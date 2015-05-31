@@ -110,6 +110,12 @@ public class UserServiceImpl implements UserService {
 		}
 		return userinfos;
 	}
+	
+	@Override
+	public void update(UserInfo pobject) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	public UserDao getUserDao() {
 		return userDao;

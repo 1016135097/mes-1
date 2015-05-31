@@ -12,9 +12,7 @@ function processdoc(tabPanel, btn) {
 		items : [ gridFormPdoc ],
 
 		autoScroll : true,
-		closable : false
-	// TODO 关闭后再打开会出错
-
+		closable : true
 	});
 
 	tabPanel.setActiveTab(n);
@@ -48,7 +46,7 @@ var dataStorePdoc = new Ext.data.Store({
 
 // 主界面
 var colModelPdoc = new Ext.grid.ColumnModel([ {
-	id : 'pdocid',
+	id : 'pdocid',//用于和表格的数据绑定
 	header : "编号",
 	width : 50,
 	sortable : true,
@@ -103,8 +101,7 @@ var gridFormPdoc = new Ext.FormPanel({
 				render : function(g) {
 					g.getSelectionModel().selectRow(0);
 				},
-				delay : 10
-			// Allow rows to be rendered.
+				delay : 500
 			}
 		}
 	}, {
@@ -151,7 +148,6 @@ var gridFormPdoc = new Ext.FormPanel({
 			fieldLabel : '操作',
 			columns : 3,
 			allowBlank : false,
-			anchor : '95%',
 			items : [ {
 				boxLabel : '添加',
 				name : 'method',
@@ -216,9 +212,12 @@ var gridFormPdoc = new Ext.FormPanel({
 			// Allow rows to be rendered.
 			}
 		} ],
+		
+		buttonAlign : 'left',
 
 		buttons : [ {
 			text : '提交',
+			style : 'margin-left:60px',
 			handler : submitPdoc
 		}, {
 			text : '清空',
@@ -286,6 +285,7 @@ function submitPdoc() {
 	if (gridFormPdoc.getForm().findField('method').getValue().inputValue == 'find') {
 		url = urlPdoc + "?method=find&id=" + textfieldid + "&title=" + textfieldtitle + "&author=" + textfieldauthor;
 		ajaxGetText(url, bindPdocXML);
+		//ajaxPostText(urlPdoc, "method=find&id=" + textfieldid + "&title=" + textfieldtitle + "&author=" + textfieldauthor, bindPdocXML);
 		return;
 	}
 
@@ -304,7 +304,7 @@ function submitPdoc() {
 		},
 		failure : function(form, action) {
 			try {
-				Ext.Msg.alert('错误提示', '原因：' + action.result.errors.info);
+				Ext.Msg.alert('错误提示', '原因：' + action.result.infos.info);
 			} catch (e) {
 				Ext.Msg.alert('错误提示', '原因：无正确数据返回');
 			}

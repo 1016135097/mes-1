@@ -49,13 +49,13 @@ public class ProcessDocController {
 		// 取得操作用户
 		UserInfo user = (UserInfo) req.getSession().getAttribute("user");
 		if (user == null) {
-			resp.getWriter().print("{ success: false, errors:{info: '请重新登录'} }");
+			resp.getWriter().print("{ success: false, infos:{info: '请重新登录'} }");
 			return;
 		}
 		
 		//验证数据
 		if(title==""||content==""||title==null||content==null){
-			resp.getWriter().print("{ success: false, errors:{info: '提交内容不能为空'} }");
+			resp.getWriter().print("{ success: false, infos:{info: '提交内容不能为空'} }");
 			return;
 		}
 
@@ -67,9 +67,9 @@ public class ProcessDocController {
 
 		try {
 			pdocService.add(pdoc);
-			resp.getWriter().print("{ success: true, errors:{} }");
+			resp.getWriter().print("{ success: true, infos:{} }");
 		} catch (POExistException e) {
-			resp.getWriter().print("{ success: false, errors:{info: '文件名重复，添加工艺文件失败！'} }");
+			resp.getWriter().print("{ success: false, infos:{info: '文件名重复，添加工艺文件失败！'} }");
 			return;
 		}
 		return;
@@ -86,12 +86,13 @@ public class ProcessDocController {
 		}
 
 		List<Pdoc> pdocs;
-		Pdoc pdocerr = new Pdoc();// 查找的文件不存在时返回的提示
+		Pdoc pdocerr;// 查找的文件不存在时返回的提示
 
 		// 查找pdoc
 		try {
 			pdocs = this.pdocService.find("userinfo", user);
 		} catch (NoSuchPOException e) {
+			pdocerr = new Pdoc();
 			pdocerr.setId(-1);
 			pdocerr.setTitle("提示:");
 			pdocerr.setContent("此用户名下没有工艺文件");
@@ -208,7 +209,7 @@ public class ProcessDocController {
 
 		// 判断参数不为空
 		if (id == null || title == "" || title == null || content == "" || content == null) {
-			resp.getWriter().print("{ success: false, errors:{info: '更改工艺文件时，编号、标题、内容都不能为空'} }");
+			resp.getWriter().print("{ success: false, infos:{info: '更改工艺文件时，编号、标题、内容都不能为空'} }");
 			return;// 前台页面应该已经判断，这里应该不会执行
 		}
 
@@ -229,14 +230,14 @@ public class ProcessDocController {
 			this.pdocService.modify(pdoc);//必须保证传入的pdoc不是持久化状态的
 
 		} catch (NoSuchPOException e) {
-			resp.getWriter().print("{ success: false, errors:{info: '提交的工艺文件编号不存在'} }");
+			resp.getWriter().print("{ success: false, infos:{info: '提交的工艺文件编号不存在'} }");
 			return;
 		} catch (POExistException e) {
-			resp.getWriter().print("{ success: false, errors:{info: '提交的工艺文件标题有重复'} }");
+			resp.getWriter().print("{ success: false, infos:{info: '提交的工艺文件标题有重复'} }");
 			return;
 		}
 		
-		resp.getWriter().print("{ success: true, errors:{} }");
+		resp.getWriter().print("{ success: true, infos:{} }");
 		return;
 		
 
@@ -251,7 +252,7 @@ public class ProcessDocController {
 
 		// 判断参数不为空
 		if (id == null) {
-			resp.getWriter().print("{ success: false, errors:{info: '删除工艺文件时，编号不能为空'} }");
+			resp.getWriter().print("{ success: false, infos:{info: '删除工艺文件时，编号不能为空'} }");
 			return;// 前台页面应该已经判断，这里应该不会执行
 		}
 
@@ -268,14 +269,14 @@ public class ProcessDocController {
 
 			// 不是自己名下的工艺文件不能删除
 			if (user.getId() != pdoc.getUserinfo().getId()) {
-				resp.getWriter().print("{ success: false, errors:{info: '只能删除自己名下的工艺文件'} }");
+				resp.getWriter().print("{ success: false, infos:{info: '只能删除自己名下的工艺文件'} }");
 				return;
 			}
 			// 删除工艺文件
 			this.pdocService.delete(pdoc);
-			resp.getWriter().print("{ success: true, errors:{} }");
+			resp.getWriter().print("{ success: true, infos:{} }");
 		} catch (NoSuchPOException | ObjectNotFoundException e1) {
-			resp.getWriter().print("{ success: false, errors:{info: '提交的工艺文件编号不存在'} }");
+			resp.getWriter().print("{ success: false, infos:{info: '提交的工艺文件编号不存在'} }");
 			return;
 		}
 

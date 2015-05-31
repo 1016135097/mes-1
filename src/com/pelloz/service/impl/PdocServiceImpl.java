@@ -11,6 +11,7 @@ import com.pelloz.dao.PdocDao;
 import com.pelloz.exception.NoSuchPOException;
 import com.pelloz.exception.POExistException;
 import com.pelloz.po.Pdoc;
+import com.pelloz.po.Tooling;
 import com.pelloz.service.PdocService;
 
 /**
@@ -55,6 +56,9 @@ public class PdocServiceImpl implements PdocService {
 		this.pdocDao.delete(pdoctmp);
 	}
 
+	/**
+	 * 必须保证传入的pdoc是非持久化状态
+	 */
 	@Override
 	public void modify(Pdoc pdoc) throws POExistException, NoSuchPOException {
 
@@ -75,6 +79,16 @@ public class PdocServiceImpl implements PdocService {
 		} else{
 			throw new POExistException("修改的工艺标题有重复，title = " + pdoc.getTitle());
 		}
+		
+	}
+	
+	/**
+	 * 必须保证传入的pdoc是持久化状态
+	 */
+	@Override
+	public void update(Pdoc pdoc) {
+
+		this.pdocDao.update(pdoc);
 		
 	}
 

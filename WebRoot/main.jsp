@@ -31,12 +31,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<script type="text/javascript" src="ext/ext-lang-zh_CN.js"></script>
 		
 		<script type="text/javascript" src="js/pelloz.js"></script>
-		<!-- //TODO 通过JSP脚本动态指定需要加载的js文件 -->
+		<!-- 通过JSP脚本动态指定需要加载的js文件 -->
 <%
 switch(user.getDepartment()){
 	case "admin": 
+		//out.println("<script type='text/javascript' src='ext/ux/Spinner.js'></script>");
+		//out.println("<script type='text/javascript' src='ext/ux/SpinnerField.js'></script>");
 		out.println("<script type='text/javascript' src='js/processdoc.js'></script>");
 		out.println("<script type='text/javascript' src='js/bom.js'></script>");
+		out.println("<script type='text/javascript' src='js/tooling.js'></script>");
 	break;
 	case "工艺室": 
 		out.println("<script type='text/javascript' src='js/processdoc.js'></script>");
@@ -46,6 +49,9 @@ switch(user.getDepartment()){
 		;
 	break;
 	case "工装室": 
+		//out.println("<script type='text/javascript' src='ext/ux/Spinner.js'></script>");
+		//out.println("<script type='text/javascript' src='ext/ux/SpinnerField.js'></script>");
+		out.println("<script type='text/javascript' src='js/tooling.js'></script>");
 		;
 	break;
 	case "计划室": 
@@ -56,7 +62,6 @@ switch(user.getDepartment()){
 	break;
 }
 %>
-		<!-- //TODO 通过JSP脚本动态指定需要加载的js文件 -->
 <script type="text/javascript">
 
 	Ext.onReady( function() {
@@ -82,7 +87,7 @@ switch(user.getDepartment()){
 				  break;
 			case 'productarrange':productarrange(tabPanel,btn);
 				  break;
-			case 'fixturemanage':fixturemanage(tabPanel,btn);
+			case 'fixturemanage':tooling(tabPanel,btn);
 				  break;
 			case 'inventory':inventory(tabPanel,btn);
 				  break;
@@ -304,7 +309,9 @@ var item5 = new Ext.Panel( {
 		var tabPanel = new Ext.TabPanel( {
 			region : 'center',
 			enableTabScroll : true,
+			closable : true,
 			deferredRender : false,
+			autoDestroy: false,
 			activeTab : 0,
 			items : [ {
 				title : '首页',

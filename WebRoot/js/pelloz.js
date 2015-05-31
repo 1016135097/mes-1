@@ -52,15 +52,67 @@ function showLocale(objD) {
 	if (ww == 6)
 		ww = "星期六";
 	colorfoot = "</font>"
-	str = colorhead + yy + "-" + MM + "-" + dd + " " + hh + ":" + mm + ":" + ss
-			+ "  " + ww + "&nbsp;&nbsp;" + colorfoot;
+	str = colorhead + yy + "-" + MM + "-" + dd + " " + hh + ":" + mm + ":" + ss + "  " + ww + "&nbsp;&nbsp;"
+			+ colorfoot;
 	return (str);
 }
 
 // Ajax异步通讯
 var xmlHttp = null;
-//接收普通文本地址
-function ajaxGetText(url,fun) {
+// 接收普通文本地址 GET方式
+function ajaxGetText(url, fun) {
+	// url表示获取数据的地址
+	// fun表示异步调用的函数，他需要接受返回的文本数据
+	if (url.length == 0) {
+		return;
+	}
+	try {// Firefox, Opera 8.0+, Safari, IE7
+		xmlHttp = new XMLHttpRequest();
+	} catch (e) {// Old IE
+		try {
+			xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+		} catch (e) {
+			alert("Your browser does not support XMLHTTP!");
+			return;
+		}
+	}
+	xmlHttp.onreadystatechange = function() {
+		if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+			fun(xmlHttp.responseText);
+		}
+	};
+	xmlHttp.open("GET", url, true);
+	xmlHttp.send(null);
+
+}
+// 接收XML地址 GET方式
+function ajaxGetXML(url, fun) {
+	// url表示获取数据的地址
+	// fun表示异步调用的函数，他需要接受返回的XML数据
+	if (url.length == 0) {
+		return;
+	}
+	try {// Firefox, Opera 8.0+, Safari, IE7
+		xmlHttp = new XMLHttpRequest();
+	} catch (e) {// Old IE
+		try {
+			xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+		} catch (e) {
+			alert("Your browser does not support XMLHTTP!");
+			return;
+		}
+	}
+	xmlHttp.onreadystatechange = function() {
+		if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+			fun(xmlHttp.responseXML);// fun处理的直接就是xmlDoc，不需要转换
+		}
+	}
+	xmlHttp.open("GET", url, true);
+	xmlHttp.send();
+}
+
+// 接收普通文本地址 POST方式
+function ajaxPostText(url, param, fun) {
 	// url表示获取数据的地址
 	// fun表示异步调用的函数，他需要接受返回的文本数据
 	if (url.length == 0) {
@@ -81,69 +133,43 @@ function ajaxGetText(url,fun) {
 			fun(xmlHttp.responseText);
 		}
 	}
-	xmlHttp.open("GET", url, false);
-	xmlHttp.send(null);
-	
+	xmlHttp.open("POST", url, true);
+	xmlHttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	xmlHttp.send(param);
+
 }
-//接收XML地址
-function ajaxGetXML(url,fun) {
-	// url表示获取数据的地址
-	// fun表示异步调用的函数，他需要接受返回的XML数据
-	if (url.length == 0) {
-		return;
-	}
-	try {// Firefox, Opera 8.0+, Safari, IE7
-		xmlHttp = new XMLHttpRequest();
-	} catch (e) {// Old IE
-		try {
-			xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+
+// 将str形式的xml解析后返回，应该配合ajaxGetText使用
+function loadXMLString(xmlstr) {
+	try // Internet Explorer
+	{
+		xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+		xmlDoc.async = "false";
+		xmlDoc.loadXML(xmlstr);
+		return (xmlDoc);
+	} catch (e) {
+		try // Firefox, Mozilla, Opera, etc.
+		{
+			parser = new DOMParser();
+			xmlDoc = parser.parseFromString(xmlstr, "text/xml");
+			return (xmlDoc);
 		} catch (e) {
-			alert("Your browser does not support XMLHTTP!");
-			return;
+			alert(e.message)
 		}
 	}
-	xmlHttp.onreadystatechange = function() {
-		if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-			fun(xmlHttp.responseXML);//fun处理的直接就是xmlDoc，不需要转换
-		}
-	}
-	xmlHttp.open("GET", url, true);
-	xmlHttp.send();
+	return (null);
 }
 
-//将str形式的xml解析后返回，应该配合ajaxGetText使用
-function loadXMLString(xmlstr) 
-{
-try //Internet Explorer
-  {
-  xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
-  xmlDoc.async="false";
-  xmlDoc.loadXML(xmlstr);
-  return(xmlDoc);  
-  }
-catch(e)
-  {
-  try //Firefox, Mozilla, Opera, etc.
-    {
-    parser=new DOMParser();
-    xmlDoc=parser.parseFromString(xmlstr,"text/xml");
-    return(xmlDoc);
-    }
-  catch(e) {alert(e.message)}
-  }
-return(null);
+// 在IE下单击复制到剪贴板，仅在IE下有效
+function copyText(text, id) { /* 仅在IE下有效 */
+	window.clipboardData.setData("text", text);
+	x = document.getElementById(id); // 查找元素
+	x.innerHTML = "邮件地址已复制"; // 改变内容
+	var t = setTimeout(function() {
+		hide(id)
+	}, 2000);
 }
-
-//在IE下单击复制到剪贴板，仅在IE下有效
-function copyText(text,id) 
-{   /* 仅在IE下有效 */
-	window.clipboardData.setData("text",text);
-	x=document.getElementById(id);  //查找元素
-	x.innerHTML="邮件地址已复制";    //改变内容
-	var t=setTimeout(function(){hide(id)},2000);
-}
-function hide(id) 
-{   
-	y=document.getElementById(id);  //查找元素
-	y.innerHTML=" ";  //改变内容
+function hide(id) {
+	y = document.getElementById(id); // 查找元素
+	y.innerHTML = " "; // 改变内容
 }
