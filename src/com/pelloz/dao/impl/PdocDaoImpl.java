@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.pelloz.dao.DaoImplHelper;
 import com.pelloz.dao.PdocDao;
+import com.pelloz.po.BOM;
 import com.pelloz.po.Pdoc;
 
 @Component
@@ -56,6 +57,14 @@ public class PdocDaoImpl extends DaoImplHelper<Pdoc> implements PdocDao {
 
 		hibernateTemplate.delete(pdoc);
 
+	}
+	
+
+	@Override
+	public void delete(BOM bom) {
+
+		hibernateTemplate.delete(bom);
+		
 	}
 
 	@Override

@@ -23,16 +23,15 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 				return true;
 			} else {
 				// 实现权限验证逻辑
-				response.setCharacterEncoding("utf-8");//防止中文乱码
-				response.setContentType("text/html; charset=utf-8");
+				response.setCharacterEncoding("utf-8");// 防止中文乱码
+				response.setContentType("text/json");
 				Boolean isAuthorised = false; //默认无权限
 				String department;
 				UserInfo userInfo = (UserInfo) request.getSession().getAttribute("user");
 				if (userInfo != null) {
 					department = userInfo.getDepartment();
 				} else {
-					request.getSession().setAttribute("errmsg", "没有权限");
-					response.sendRedirect("err/err.jsp");
+					response.getWriter().print("{ success: false, infos:{info: '没有权限，请使用正确用户登录'} }");
 					return false;
 				}
 				
@@ -47,9 +46,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 					return true;
 				else// 如果验证失败
 				{
-					// 返回到错误界面
-					request.getSession().setAttribute("errmsg", "没有权限");
-					response.sendRedirect("err/err.jsp");
+					response.getWriter().print("{ success: false, infos:{info: '没有权限，请使用正确用户登录'} }");
 					return false;
 				}
 			}

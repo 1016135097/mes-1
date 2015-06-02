@@ -29,7 +29,8 @@ function bindPdocXML(xmlstr) {
 
 // data bind
 var pdocs = Ext.data.Record.create([ {
-	name : 'id'
+	name : 'id',
+	type : 'int'
 }, {
 	name : 'title'
 }, {
@@ -46,12 +47,12 @@ var dataStorePdoc = new Ext.data.Store({
 
 // 主界面
 var colModelPdoc = new Ext.grid.ColumnModel([ {
-	id : 'pdocid',//用于和表格的数据绑定
+	id : 'pdocid',// 用于和表格的数据绑定
 	header : "编号",
 	width : 50,
 	sortable : true,
 	locked : false,
-	dataIndex : 'id'//用于和Ext.data.Record的元素name相对应
+	dataIndex : 'id'// 用于和Ext.data.Record的元素name相对应
 }, {
 	id : 'pdoctitle',
 	header : "标题",
@@ -81,35 +82,37 @@ var gridFormPdoc = new Ext.FormPanel({
 	items : [ {
 		columnWidth : 0.60,
 		layout : 'fit',
-		items : {
-			xtype : 'grid',
-			ds : dataStorePdoc,
-			cm : colModelPdoc,
-			sm : new Ext.grid.RowSelectionModel({
-				singleSelect : true,
-				listeners : {
-					rowselect : function(sm, row, rec) {
-						Ext.getCmp("pdoc-form").getForm().loadRecord(rec);
-					}
-				}
-			}),
-			autoExpandColumn : 'pdoctitle',
-			height : 350,
-			title : '工艺文件列表',
-			border : true,
+		xtype : 'grid',
+		ds : dataStorePdoc,
+		cm : colModelPdoc,
+		sm : new Ext.grid.RowSelectionModel({
+			singleSelect : true,
 			listeners : {
-				render : function(g) {
-					g.getSelectionModel().selectRow(0);
-				},
-				delay : 500
+				rowselect : function(sm, row, rec) {
+					Ext.getCmp("pdoc-form").getForm().loadRecord(rec);
+				}
 			}
+		}),
+		autoExpandColumn : 'pdoctitle',
+		height : 350,
+		title : '工艺文件列表(单击显示详情，双击查看修改BOM)',
+		border : true,
+		listeners : {
+			render : function(g) {
+				g.getSelectionModel().selectRow(0);
+			},
+			rowdblclick : function(grid, row) {
+				activeBomPanel(dataStorePdoc.getAt(row).data["id"], dataStorePdoc.getAt(row).data["title"]);
+			},
+			delay : 400
 		}
+
 	}, {
 		frame : true,
 		columnWidth : 0.4,
 		xtype : 'fieldset',
 		labelWidth : 60,
-		title : '&nbsp;工艺详情',
+		title : '&nbsp;工艺文件详情',
 		defaults : {
 			width : 300,
 			border : false
@@ -165,6 +168,11 @@ var gridFormPdoc = new Ext.FormPanel({
 				name : 'method',
 				inputValue : 'find',
 				checked : true
+			}, {
+				boxLabel : '查看BOM',
+				name : 'method',
+				inputValue : 'bom'
+
 			} ],
 			listeners : {
 				change : function(radiogroup, checkedradio) {
@@ -203,6 +211,12 @@ var gridFormPdoc = new Ext.FormPanel({
 						textfieldcontent.reset();
 						textfieldauthor.enable();
 						break;
+					case 'bom':
+						textfieldid.enable();
+						textfieldtitle.disable();
+						textfieldcontent.disable();
+						textfieldauthor.disable();
+						break;
 					default:
 						;
 						break;
@@ -212,7 +226,7 @@ var gridFormPdoc = new Ext.FormPanel({
 			// Allow rows to be rendered.
 			}
 		} ],
-		
+
 		buttonAlign : 'left',
 
 		buttons : [ {
@@ -239,7 +253,9 @@ function submitPdoc() {
 	var textfieldauthor = gridFormPdoc.getForm().findField('pdocauthor').getValue();
 	var textfieldcontent = gridFormPdoc.getForm().findField('pdoccontent').getValue();
 
-	switch (gridFormPdoc.getForm().findField('method').getValue().inputValue) {
+	var method = gridFormPdoc.getForm().findField('method').getValue().inputValue;
+
+	switch (method) {
 	case 'add':
 		if (textfieldid != '') {
 			Ext.Msg.alert('提示', '添加工艺不能指定编号');
@@ -275,18 +291,24 @@ function submitPdoc() {
 			Ext.Msg.alert('提示', '搜索工艺时请至少指定一项除工艺内容的条件');
 			return;
 		}
+
+		url = urlPdoc + "?method=find&id=" + textfieldid + "&title=" + textfieldtitle + "&author=" + textfieldauthor;
+		ajaxGetText(url, bindPdocXML);
+		return;
+
+		break;
+	case 'bom':
+		if (textfieldid == '') {
+			Ext.Msg.alert('提示', '查看BOM时必须指定工艺文件编号');
+			return;
+		}
+		activeBomPanel(textfieldid, textfieldtitle);
+		return;
 		break;
 	default:
 		Ext.Msg.alert('提示', '系统错误，请完整加载页面再操作');
 		return;
 		break;
-	}
-
-	if (gridFormPdoc.getForm().findField('method').getValue().inputValue == 'find') {
-		url = urlPdoc + "?method=find&id=" + textfieldid + "&title=" + textfieldtitle + "&author=" + textfieldauthor;
-		ajaxGetText(url, bindPdocXML);
-		//ajaxPostText(urlPdoc, "method=find&id=" + textfieldid + "&title=" + textfieldtitle + "&author=" + textfieldauthor, bindPdocXML);
-		return;
 	}
 
 	gridFormPdoc.getForm().submit({
@@ -318,4 +340,34 @@ function resetPdoc() {
 
 function refreshPdoc() {
 	ajaxGetText(urlGetXmlPdoc, bindPdocXML);
+}
+
+function activeBomPanel(pdocid, title) {
+
+	bomPdocid = pdocid;
+	ajaxGetText(urlGetXmlBom(), bindBomXML);
+	gridFormBom.getComponent('bomcolumn').setTitle('BOM列表####工艺编号: ' + pdocid + '####工艺标题: ' + title);
+
+	var n;
+	tabPanel = Ext.getCmp("tabPanel");
+	n = tabPanel.getComponent('bom');
+	if (n) {
+
+		n.show();
+		tabPanel.setActiveTab(n);
+		return;
+	}
+	n = tabPanel.add({
+		id : 'bom',
+		title : '物料清单',
+		layout : 'fit',
+		items : [ gridFormBom ],
+
+		autoScroll : true,
+		closable : true
+	});
+
+	tabPanel.setActiveTab(n);
+
+	return;
 }

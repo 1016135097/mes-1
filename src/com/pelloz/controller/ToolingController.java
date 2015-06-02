@@ -39,7 +39,7 @@ public class ToolingController {
 	@Resource
 	private ToolingService toolingService;
 
-	@AuthPassport(department = { "admin", "工装室" })
+	@AuthPassport(department = { "admin", "工装室", "工艺室" })
 	@RequestMapping(params = "method=add")
 	public void add(String name, Integer amount, HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
@@ -59,6 +59,11 @@ public class ToolingController {
 			return;
 		}
 
+		// 工艺室没有权限修改数量
+		if (user.getDepartment().equals("工艺室")) {
+			amount = 0;
+		}
+
 		Tooling tooling = new Tooling();
 		// 保存数据
 		tooling.setName(name);
@@ -67,7 +72,6 @@ public class ToolingController {
 		try {
 			toolingService.add(tooling);
 			resp.getWriter().print("{ success: true, infos:{id: " + tooling.getId() + "} }");
-			// TODO 要不要加''?
 		} catch (POExistException e) {
 			resp.getWriter().print("{ success: false, infos:{info: '工装名称重复，添加工装失败！'} }");
 			return;
@@ -75,7 +79,7 @@ public class ToolingController {
 		return;
 	}
 
-	@AuthPassport(department = { "admin", "工装室" })
+	@AuthPassport(department = { "admin", "工装室", "工艺室" })
 	@RequestMapping(params = "method=gettoolingxmlstr")
 	public void getToolingXMLStr(HttpServletRequest req, HttpServletResponse resp) throws NoSuchPOException {
 
@@ -110,10 +114,9 @@ public class ToolingController {
 		return;
 	}
 
-	@AuthPassport(department = { "admin", "工装室" })
+	@AuthPassport(department = { "admin", "工装室", "工艺室" })
 	@RequestMapping(params = "method=find")
-	public void find(Integer id, String name, HttpServletRequest req, HttpServletResponse resp)
-			throws IOException {
+	public void find(Integer id, String name, HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		// 优先id，然后name
 
 		// 取得操作用户
@@ -166,7 +169,7 @@ public class ToolingController {
 		return;
 	}
 
-	@AuthPassport(department = { "admin", "工装室" })
+	@AuthPassport(department = { "admin", "工装室", "工艺室" })
 	@RequestMapping(params = "method=modify")
 	public void modify(Integer id, String name, Integer amount, HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
@@ -184,6 +187,11 @@ public class ToolingController {
 		UserInfo user = (UserInfo) req.getSession().getAttribute("user");
 		if (user == null) {
 			return;// 已经在权限检查中保证用户的存在，这里应该不会执行
+		}
+
+		// 工艺室没有权限修改数量
+		if (user.getDepartment().equals("工艺室")) {
+			amount = 0;
 		}
 
 		// 取得id对应的tooling，修改后保存
@@ -241,8 +249,7 @@ public class ToolingController {
 
 		return;
 	}
-	
-	
+
 	@AuthPassport(department = { "admin", "工装室" })
 	@RequestMapping(params = "method=out")
 	public void out(Integer id, Integer opernum, HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -280,8 +287,7 @@ public class ToolingController {
 
 		return;
 	}
-	
-	
+
 	@AuthPassport(department = { "admin", "工装室" })
 	@RequestMapping(params = "method=in")
 	public void in(Integer id, Integer opernum, HttpServletRequest req, HttpServletResponse resp) throws IOException {

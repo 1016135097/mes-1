@@ -31,11 +31,13 @@ function bindToolingXML(xmlstr) {
 
 // data bind
 var toolings = Ext.data.Record.create([ {
-	name : 'id'
+	name : 'id',
+	type : 'int'
 }, {
 	name : 'name'
 }, {
-	name : 'amount'
+	name : 'amount',
+	type : 'int'
 } ]);
 
 var dataStoreTooling = new Ext.data.Store({
@@ -75,29 +77,28 @@ var gridFormTooling = new Ext.FormPanel({
 	items : [ {
 		columnWidth : 0.6,
 		layout : 'fit',
-		items : {
-			xtype : 'grid',
-			ds : dataStoreTooling,
-			cm : colModelTooling,
-			sm : new Ext.grid.RowSelectionModel({
-				singleSelect : true,
-				listeners : {
-					rowselect : function(sm, row, rec) {
-						Ext.getCmp("tooling-form").getForm().loadRecord(rec);
-					}
-				}
-			}),
-			autoExpandColumn : 'toolingname',
-			height : 350,
-			title : '工装列表',
-			border : true,
+		xtype : 'grid',
+		ds : dataStoreTooling,
+		cm : colModelTooling,
+		sm : new Ext.grid.RowSelectionModel({
+			singleSelect : true,
 			listeners : {
-				render : function(g) {
-					g.getSelectionModel().selectRow(0);
-				},
-				delay : 500
+				rowselect : function(sm, row, rec) {
+					Ext.getCmp("tooling-form").getForm().loadRecord(rec);
+				}
 			}
+		}),
+		autoExpandColumn : 'toolingname',
+		height : 350,
+		title : '工装列表',
+		border : true,
+		listeners : {
+			render : function(g) {
+				g.getSelectionModel().selectRow(0);
+			},
+			delay : 500
 		}
+
 	}, {
 		frame : true,
 		columnWidth : 0.4,
@@ -172,7 +173,7 @@ var gridFormTooling = new Ext.FormPanel({
 			}, {
 				boxLabel : '删除',
 				name : 'method',
-				inputValue : 'delete',
+				inputValue : 'delete'
 			} ],
 			listeners : {
 				change : function(radiogroup, checkedradio) {
@@ -276,6 +277,11 @@ function submitTooling() {
 			Ext.Msg.alert('提示', '搜索工装时请至少指定一项条件');
 			return;
 		}
+
+		url = urlTooling + "?method=find&id=" + textfieldid + "&name=" + textfieldname;
+		ajaxGetText(url, bindToolingXML);
+		return;
+
 		break;
 	case 'out':
 		if (textfieldid == '' || textfieldopernum == '') {
@@ -315,12 +321,6 @@ function submitTooling() {
 		Ext.Msg.alert('提示', '系统错误，请完整加载页面再操作');
 		return;
 		break;
-	}
-
-	if (method == 'find') {
-		url = urlTooling + "?method=find&id=" + textfieldid + "&name=" + textfieldname;
-		ajaxGetText(url, bindToolingXML);
-		return;
 	}
 
 	gridFormTooling.getForm().submit({

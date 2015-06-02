@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import com.pelloz.dao.PdocDao;
 import com.pelloz.exception.NoSuchPOException;
 import com.pelloz.exception.POExistException;
+import com.pelloz.po.BOM;
 import com.pelloz.po.Pdoc;
-import com.pelloz.po.Tooling;
 import com.pelloz.service.PdocService;
 
 /**
@@ -54,6 +54,14 @@ public class PdocServiceImpl implements PdocService {
 			throw new NoSuchPOException("要删除的工艺文件不存在,id = " + id);
 		}
 		this.pdocDao.delete(pdoctmp);
+	}
+	
+
+	@Override
+	public void delete(BOM bom) {
+
+		this.pdocDao.delete(bom);
+		
 	}
 
 	/**

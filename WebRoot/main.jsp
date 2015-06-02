@@ -37,13 +37,14 @@ switch(user.getDepartment()){
 	case "admin": 
 		//out.println("<script type='text/javascript' src='ext/ux/Spinner.js'></script>");
 		//out.println("<script type='text/javascript' src='ext/ux/SpinnerField.js'></script>");
-		out.println("<script type='text/javascript' src='js/processdoc.js'></script>");
 		out.println("<script type='text/javascript' src='js/bom.js'></script>");
+		out.println("<script type='text/javascript' src='js/processdoc.js'></script>");
 		out.println("<script type='text/javascript' src='js/tooling.js'></script>");
 	break;
 	case "工艺室": 
-		out.println("<script type='text/javascript' src='js/processdoc.js'></script>");
 		out.println("<script type='text/javascript' src='js/bom.js'></script>");
+		out.println("<script type='text/javascript' src='js/processdoc.js'></script>");
+		out.println("<script type='text/javascript' src='js/tooling.js'></script>");
 	break;
 	case "车间生产": 
 		;
@@ -81,8 +82,8 @@ switch(user.getDepartment()){
 			{
 			case 'processdoc': processdoc(tabPanel,btn);
 			  break;
-			case 'bom':bom(tabPanel,btn);
-			  break;
+			/* case 'bom':bom(tabPanel,btn);
+			  break; */
 			case 'productplan':productplan(tabPanel,btn);
 				  break;
 			case 'productarrange':productarrange(tabPanel,btn);
@@ -141,7 +142,7 @@ if(department.equals("admin")||department.equals("工艺室")){
 
 			}),
 
-			new Ext.Button({
+			/* new Ext.Button({
 				id : 'bom',
 				text : '物料清单',
 				width : '100%',
@@ -149,6 +150,15 @@ if(department.equals("admin")||department.equals("工艺室")){
 					click : addPanel
 				}
 
+			}) */
+			
+			new Ext.Button({
+				id : 'fixturemanage',
+				text : '工装管理',
+				width : '100%',
+				listeners : {
+					click : addPanel
+				}
 			})
 
 			]
@@ -206,7 +216,7 @@ var item3 = new Ext.Panel( {
 			listeners : {
 				click : addPanel
 			}
-		}),
+		})
 		]
 });
 <%
@@ -263,7 +273,7 @@ var item5 = new Ext.Panel( {
 				click : addPanel
 			}
 
-		}),
+		})
 		]
 });
 <%
@@ -307,6 +317,7 @@ var item5 = new Ext.Panel( {
 		});
 
 		var tabPanel = new Ext.TabPanel( {
+			id : 'tabPanel',
 			region : 'center',
 			enableTabScroll : true,
 			closable : true,

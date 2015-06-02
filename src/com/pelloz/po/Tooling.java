@@ -24,8 +24,8 @@ public class Tooling {
 	
 	private int amount;//工具总量
 
-	@OneToMany(mappedBy = "tooling", cascade = { CascadeType.MERGE }, fetch = FetchType.LAZY)
-	private Set<BOM> boms = new HashSet<BOM>();
+	/*@OneToMany(mappedBy = "tooling", cascade = { CascadeType.MERGE }, fetch = FetchType.LAZY)
+	private Set<BOM> boms = new HashSet<BOM>();*/
 
 	@OneToMany(mappedBy = "tooling", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	private Set<OrderForm> orderforms = new HashSet<OrderForm>();
@@ -62,12 +62,12 @@ public class Tooling {
 		this.orderforms = orderforms;
 	}
 
-	public Set<BOM> getBoms() {
+/*	public Set<BOM> getBoms() {
 		return boms;
 	}
 
 	public void setBoms(Set<BOM> boms) {
 		this.boms = boms;
-	}
+	}*/
 
 }

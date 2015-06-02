@@ -4,8 +4,7 @@ import java.io.Serializable;
 
 import com.pelloz.exception.NoSuchPOException;
 import com.pelloz.exception.POExistException;
-import com.pelloz.po.Pdoc;
-import com.pelloz.po.Tooling;
+
 /**
  * 实体类服务接口，会抛出POExistException和NoSuchPOException
  * @author zp
