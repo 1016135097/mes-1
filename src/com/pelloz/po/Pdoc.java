@@ -33,9 +33,6 @@ public class Pdoc {
 	@OneToMany(mappedBy = "pdoc", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	private Set<BOM> boms = new HashSet<BOM>();
 
-	@OneToMany(mappedBy = "pdoc", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	private Set<ProductionPlan> productionplan = new HashSet<ProductionPlan>();
-
 	public int getId() {
 		return id;
 	}
@@ -58,14 +55,6 @@ public class Pdoc {
 
 	public void setContent(String content) {
 		this.content = content;
-	}
-
-	public Set<ProductionPlan> getProductionplan() {
-		return productionplan;
-	}
-
-	public void setProductionplan(Set<ProductionPlan> productionplan) {
-		this.productionplan = productionplan;
 	}
 
 	public UserInfo getUserinfo() {

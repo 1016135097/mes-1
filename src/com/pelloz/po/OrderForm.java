@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 public class OrderForm {
@@ -17,6 +19,7 @@ public class OrderForm {
 	private String title;// 订单简介
 	private int amount;// 购买的数量
 	private double price;// 单价
+	@Temporal(TemporalType.DATE)
 	private Date date;// 订单预计完成时间
 
 	@ManyToOne(cascade = { CascadeType.MERGE })

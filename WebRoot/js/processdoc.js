@@ -1,5 +1,5 @@
 //processdoc中使用的全局变量
-var pdocXML
+var pdocXML;
 var urlGetXmlPdoc = "processdoc.do?method=getpdocxmlstr";
 var urlPdoc = "processdoc.do";
 // 用于TabPanel的添加
@@ -41,7 +41,7 @@ var pdocs = Ext.data.Record.create([ {
 
 var dataStorePdoc = new Ext.data.Store({
 	reader : new Ext.data.XmlReader({
-		record : "pdoc",// The repeated element which contains row information
+		record : 'pdoc'// The repeated element which contains row information
 	}, pdocs)
 });
 
@@ -80,7 +80,8 @@ var gridFormPdoc = new Ext.FormPanel({
 	bodyStyle : 'padding:5px',
 	layout : 'column', // Specifies that the items will now be arranged in columns
 	items : [ {
-		columnWidth : 0.60,
+		id : 'pdoccolumn',
+		columnWidth : 1,
 		layout : 'fit',
 		xtype : 'grid',
 		ds : dataStorePdoc,
@@ -109,7 +110,8 @@ var gridFormPdoc = new Ext.FormPanel({
 
 	}, {
 		frame : true,
-		columnWidth : 0.4,
+		width: 350,
+		//columnWidth : 0.35,
 		xtype : 'fieldset',
 		labelWidth : 60,
 		title : '&nbsp;工艺文件详情',
@@ -147,7 +149,7 @@ var gridFormPdoc = new Ext.FormPanel({
 			name : 'author'
 		}, {
 			xtype : 'radiogroup',
-			id : 'method',
+			id : 'pdocmethod',
 			fieldLabel : '操作',
 			columns : 3,
 			allowBlank : false,
@@ -253,7 +255,7 @@ function submitPdoc() {
 	var textfieldauthor = gridFormPdoc.getForm().findField('pdocauthor').getValue();
 	var textfieldcontent = gridFormPdoc.getForm().findField('pdoccontent').getValue();
 
-	var method = gridFormPdoc.getForm().findField('method').getValue().inputValue;
+	var method = gridFormPdoc.getForm().findField('pdocmethod').getValue().inputValue;
 
 	switch (method) {
 	case 'add':

@@ -29,7 +29,7 @@ public class UserInfo {
 	private Set<Pdoc> pdocs = new HashSet<Pdoc>();
 
 	@OneToMany(mappedBy = "userinfo", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	private Set<ProductionPlan> productionplan = new HashSet<ProductionPlan>();
+	private Set<Plan> productionplan = new HashSet<Plan>();
 
 	@OneToMany(mappedBy = "userinfo", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	private Set<OrderForm> orderforms = new HashSet<OrderForm>();
@@ -90,11 +90,11 @@ public class UserInfo {
 		this.pdocs = pdocs;
 	}
 
-	public Set<ProductionPlan> getProductionplan() {
+	public Set<Plan> getProductionplan() {
 		return productionplan;
 	}
 
-	public void setProductionplan(Set<ProductionPlan> productionplan) {
+	public void setProductionplan(Set<Plan> productionplan) {
 		this.productionplan = productionplan;
 	}
 

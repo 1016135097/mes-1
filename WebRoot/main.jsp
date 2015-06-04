@@ -22,6 +22,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<link rel="stylesheet" type="text/css" href="ext/resources/css/ext-all.css" />
 		<link rel="stylesheet" type="text/css" href="css/clear.css" />
 		<link rel="stylesheet" type="text/css" href="css/pelloz.css" />
+<style type="text/css">
+.x-date-picker{
+border: 1px solid;
+border-top:0 none;
+position:relative;
+width: 185px;
+}
+.x-form-field{
+padding-left: 25px;
+}
+</style>
 		<!-- GC -->
 		<!-- LIBS -->
 		<script type="text/javascript" src="ext/adapter/ext/ext-base.js"></script>
@@ -35,11 +46,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <%
 switch(user.getDepartment()){
 	case "admin": 
-		//out.println("<script type='text/javascript' src='ext/ux/Spinner.js'></script>");
-		//out.println("<script type='text/javascript' src='ext/ux/SpinnerField.js'></script>");
 		out.println("<script type='text/javascript' src='js/bom.js'></script>");
 		out.println("<script type='text/javascript' src='js/processdoc.js'></script>");
 		out.println("<script type='text/javascript' src='js/tooling.js'></script>");
+		out.println("<script type='text/javascript' src='js/plan.js'></script>");
 	break;
 	case "工艺室": 
 		out.println("<script type='text/javascript' src='js/bom.js'></script>");
@@ -50,12 +60,13 @@ switch(user.getDepartment()){
 		;
 	break;
 	case "工装室": 
-		//out.println("<script type='text/javascript' src='ext/ux/Spinner.js'></script>");
-		//out.println("<script type='text/javascript' src='ext/ux/SpinnerField.js'></script>");
 		out.println("<script type='text/javascript' src='js/tooling.js'></script>");
 		;
 	break;
 	case "计划室": 
+		out.println("<script type='text/javascript' src='js/bom.js'></script>");
+		out.println("<script type='text/javascript' src='js/processdoc.js'></script>");
+		out.println("<script type='text/javascript' src='js/plan.js'></script>");
 		;
 	break;
 	case "采购部": 
@@ -81,21 +92,19 @@ switch(user.getDepartment()){
 			switch(btn.id)
 			{
 			case 'processdoc': processdoc(tabPanel,btn);
-			  break;
-			/* case 'bom':bom(tabPanel,btn);
-			  break; */
-			case 'productplan':productplan(tabPanel,btn);
-				  break;
+				break;
+			case 'productplan':plan(tabPanel,btn);
+				break;
 			case 'productarrange':productarrange(tabPanel,btn);
-				  break;
+				break;
 			case 'fixturemanage':tooling(tabPanel,btn);
-				  break;
+				break;
 			case 'inventory':inventory(tabPanel,btn);
-				  break;
+				break;
 			case 'buyingrequire':buyingrequire(tabPanel,btn);
-				  break;
+				break;
 			case 'system': system(tabPanel,btn);
-				  break;
+				break;
 			default:;
 				break;
 			}
@@ -141,16 +150,6 @@ if(department.equals("admin")||department.equals("工艺室")){
 				}
 
 			}),
-
-			/* new Ext.Button({
-				id : 'bom',
-				text : '物料清单',
-				width : '100%',
-				listeners : {
-					click : addPanel
-				}
-
-			}) */
 			
 			new Ext.Button({
 				id : 'fixturemanage',
@@ -240,16 +239,16 @@ var item4 = new Ext.Panel( {
 			}
 
 		}),
-
+		
 		new Ext.Button({
-			id : 'inventory',
-			text : '库存',
+			id : 'processdoc',
+			text : '工艺文件',
 			width : '100%',
 			listeners : {
 				click : addPanel
 			}
 
-		})
+		}),
 
 		]
 });
@@ -348,14 +347,16 @@ var item5 = new Ext.Panel( {
 		})
 
 		var viewport = new Ext.Viewport( {
+			renderTo: 'mainbody',
 			layout : 'border',
-			items : [ topPanel,accordion, tabPanel ]
+			width : 1200,
+			items : [ topPanel,accordion, tabPanel ]			
 		});
 
 	});
 </script>
 	</head>
 	<body>
-		
+		<div id="mainbody" style="width:1200px;height:100%;overflow:auto;"></div>
 	</body>
 </html>

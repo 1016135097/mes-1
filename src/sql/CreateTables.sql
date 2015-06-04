@@ -1,6 +1,8 @@
 #注释 *必须* 以分号结尾;
 #请注意建表顺序;
 
+use pelloz;
+
 #创建用户表;
 create table  `userinfo`(
 	`id` INT not null auto_increment,
@@ -24,7 +26,7 @@ create table `orderform`(
 	`title` VARCHAR(255),
 	`amount` INT not null,
 	`price` DOUBLE not null,
-	`date` DATETIME,
+	`date` DATE,
 	`tooling_id` INT,
 	`userinfo_id` INT,
 	primary key (`id`));
@@ -55,26 +57,28 @@ alter table `pdoc`
 	references `userinfo`(`id`);
 
 #创建生产计划表;
-create table `productionplan`(
+create table `pelloz`.`plan`(
 	`id` INT not null auto_increment,
 	`title` VARCHAR(255),
-	`enddate` DATETIME,
+	`num` INT not null,
+	`enddate` DATE,
 	`isOnPlan` BIT not null,
-	`isOnProducing` BIT not null,
+	`isOnProducting` BIT not null,
 	`pdoc_id` INT,
 	`userinfo_id` INT,
-	primary key (`id`));
+	primary key (`id`)
+    );
 
-alter table `productionplan`  
+alter table `pelloz`.`plan`  
 	add index `FK_ismm3fsl8kwlge2lo1pao1967`(`userinfo_id`), 
 	add constraint `FK_ismm3fsl8kwlge2lo1pao1967` 
 	foreign key (`userinfo_id`) 
-	references `userinfo`(`id`);
-alter table `productionplan`  
+	references `pelloz`.`userinfo`(`id`);
+alter table `pelloz`.`plan`  
 	add index `FK_rv4krkew51moohu9sh0gj9pbw`(`pdoc_id`), 
 	add constraint `FK_rv4krkew51moohu9sh0gj9pbw` 
 	foreign key (`pdoc_id`) 
-	references `pdoc`(`id`);
+	references `pelloz`.`pdoc`(`id`);
 
 #创建BOM表;
 create table `bom`(

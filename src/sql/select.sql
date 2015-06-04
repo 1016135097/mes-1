@@ -2,6 +2,6 @@ use pelloz;
 select * from userinfo;
 select * from orderform;
 select * from pdoc;
-select * from productionplan;
+select * from plan;
 select * from tooling;
 select * from bom;

@@ -11,19 +11,6 @@ function urlGetXmlBom() {
 	return urlBom + "?method=getbomxmlstr&pdocid=" + bomPdocid;
 }
 
-// 用于TabPanel的添加
-/*
- * function bom(tabPanel, btn) {
- * 
- * var n = tabPanel.add({ id : btn.id, title : btn.text, layout : 'fit', items : [ gridFormBom ],
- * 
- * autoScroll : true, closable : true });
- * 
- * tabPanel.setActiveTab(n);
- * 
- * ajaxGetText(urlGetXmlBom(), bindBomXML); }
- */
-
 function bindBomXML(xmlstr) {
 	bomXML = loadXMLString(xmlstr);
 	dataStoreBom.loadData(bomXML);
@@ -41,11 +28,14 @@ var boms = Ext.data.Record.create([ {
 }, {
 	name : 'amount',
 	type : 'int'
+}, {
+	name : 'inventory',
+	type : 'int'
 } ]);
 
 var dataStoreBom = new Ext.data.Store({
 	reader : new Ext.data.XmlReader({
-		record : "bom",// TODO mark The repeated element which contains row information
+		record : "bom",
 	}, boms)
 });
 
@@ -75,6 +65,12 @@ var colModelBom = new Ext.grid.ColumnModel([ {
 	width : 80,
 	sortable : true,
 	dataIndex : 'amount'
+}, {
+	id : 'inventory',
+	header : "库存数量",
+	width : 80,
+	sortable : true,
+	dataIndex : 'inventory'
 } ]);
 
 var gridFormBom = new Ext.FormPanel({
@@ -85,7 +81,7 @@ var gridFormBom = new Ext.FormPanel({
 	layout : 'column',
 	items : [ {
 		id : 'bomcolumn',
-		columnWidth : 0.6,
+		columnWidth : 1,
 		layout : 'fit',
 		xtype : 'grid',
 		ds : dataStoreBom,
@@ -111,7 +107,8 @@ var gridFormBom = new Ext.FormPanel({
 
 	}, {
 		frame : true,
-		columnWidth : 0.4,
+		width: 350,
+		//columnWidth : 0.35,
 		xtype : 'fieldset',
 		labelWidth : 60,
 		title : '&nbsp;BOM详情',

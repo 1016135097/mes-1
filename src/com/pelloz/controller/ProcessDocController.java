@@ -295,8 +295,8 @@ public class ProcessDocController {
 		Element rootpdocs = document.addElement("pdocs");
 		for (Pdoc pdoc : pdocs) {
 			Element rootpdoc = rootpdocs.addElement("pdoc");
-			rootpdoc.addElement("id").addText(String.valueOf(pdoc.getId()));//TODO 我觉得还是应该改到id
-			rootpdoc.addElement("title").addText(pdoc.getTitle());//TODO 因为已经在上一级确定是属于pdoc了
+			rootpdoc.addElement("id").addText(String.valueOf(pdoc.getId()));
+			rootpdoc.addElement("title").addText(pdoc.getTitle());
 			rootpdoc.addElement("content").addText(pdoc.getContent());
 			rootpdoc.addElement("author").addText(pdoc.getUserinfo().getFullname());
 

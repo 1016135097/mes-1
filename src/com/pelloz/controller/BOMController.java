@@ -273,6 +273,7 @@ public class BOMController {
 			rootbom.addElement("toolingid").addText(String.valueOf(bom.getTooling().getId()));
 			rootbom.addElement("toolingname").addText(bom.getTooling().getName());
 			rootbom.addElement("amount").addText(String.valueOf(bom.getAmount()));
+			rootbom.addElement("inventory").addText(String.valueOf(bom.getTooling().getAmount()));
 
 		}
 

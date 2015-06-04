@@ -42,7 +42,7 @@ var toolings = Ext.data.Record.create([ {
 
 var dataStoreTooling = new Ext.data.Store({
 	reader : new Ext.data.XmlReader({
-		record : "tooling",// TODO mark The repeated element which contains row information
+		record : "tooling",
 	}, toolings)
 });
 
@@ -75,7 +75,8 @@ var gridFormTooling = new Ext.FormPanel({
 	bodyStyle : 'padding:5px',
 	layout : 'column',
 	items : [ {
-		columnWidth : 0.6,
+		id : 'toolingcolumn',
+		columnWidth : 1,
 		layout : 'fit',
 		xtype : 'grid',
 		ds : dataStoreTooling,
@@ -101,7 +102,8 @@ var gridFormTooling = new Ext.FormPanel({
 
 	}, {
 		frame : true,
-		columnWidth : 0.4,
+		width: 350,
+		//columnWidth : 0.35,
 		xtype : 'fieldset',
 		labelWidth : 60,
 		title : '&nbsp;工装详情',

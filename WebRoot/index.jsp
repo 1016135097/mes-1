@@ -28,15 +28,15 @@ body {
 <body>
 	<div class="leftbanner">
 
-		<div class="email" onclick="copyText('pellozhang@163.com','insert')">
-			pellozhang@163.com<br /> <a href="file/Java工程师-张鹏.pdf" title="PDF简历"
-				target="_blank">PDF简历</a><br /> <span id="insert"> </span>
-		</div>
 	</div>
 	<div class="right">
 		<div id="rightup">
 			<br /> <br /> <span class="bold">欢迎试用本MES系统<br /> Created
 				By 张鹏
+				<div class="email" onclick="copyText('pellozhang@163.com','insert')">
+					pellozhang@163.com<br />
+					<span id="insert"> </span>
+				</div>
 			</span><br /> <br /> 管理员账号:admin<br /> 管理员密码:admin<br /> 其他角色账号密码见输入框下面<br />
 		</div>
 		<div id="right">
