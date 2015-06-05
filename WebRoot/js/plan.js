@@ -42,7 +42,7 @@ var plans = Ext.data.Record.create([ {
 }, {
 	name : 'enddate',
 	type : 'date',
-	dateFormat : 'Y-m-d' // 'n/j h:ia'
+	dateFormat : 'Y-m-d'
 }, {
 	name : 'onplan',
 	type : 'boolean'
@@ -50,10 +50,14 @@ var plans = Ext.data.Record.create([ {
 	name : 'onproducting',
 	type : 'boolean'
 }, {
-	name : 'planner'
+	name : 'complete',
+	type : 'boolean'
+}, {
+	name : 'user'
 } ]);
 
 var dataStorePlan = new Ext.data.Store({
+	sortInfo: { field: "id", direction: "ASC" },
 	reader : new Ext.data.XmlReader({
 		record : "plan",// The repeated element which contains row information
 	}, plans)
@@ -63,7 +67,7 @@ var dataStorePlan = new Ext.data.Store({
 var colModelPlan = new Ext.grid.ColumnModel([ {
 	id : 'planid',// 用于和表格的数据绑定
 	header : "编号",
-	width : 40,
+	width : 50,
 	sortable : true,
 	locked : false,
 	dataIndex : 'id'// 用于和Ext.data.Record的元素name相对应
@@ -90,28 +94,31 @@ var colModelPlan = new Ext.grid.ColumnModel([ {
 	header : "完成时间",
 	width : 100,
 	sortable : true,
-	renderer : changToRed,
+	renderer : changDateToRed,
 	dataIndex : 'enddate'
 }, {
-	id : 'onplan',
 	header : "已上线",
 	width : 55,
 	sortable : true,
-	renderer : changToCN,
+	renderer : trueToGreen,
 	dataIndex : 'onplan'
 }, {
-	id : 'onproducting',
 	header : "在生产",
 	width : 55,
 	sortable : true,
-	renderer : changToCN,
+	renderer : trueToGreen,
 	dataIndex : 'onproducting'
 }, {
-	id : 'planner',
-	header : "计划员",
+	header : "已完成",
 	width : 55,
 	sortable : true,
-	dataIndex : 'planner'
+	renderer : trueToGreen,
+	dataIndex : 'complete'
+}, {
+	header : "负责人",
+	width : 55,
+	sortable : true,
+	dataIndex : 'user'
 } ]);
 
 var gridFormPlan = new Ext.FormPanel({
@@ -144,8 +151,8 @@ var gridFormPlan = new Ext.FormPanel({
 				g.getSelectionModel().selectRow(0);
 			},
 			rowdblclick : function(grid, row) {
-				activePlanPanel(dataStorePlan.getAt(row).data["id"], dataStorePlan.getAt(row).data["title"]);
-			},// TODO 需要修改
+				activePdocPanel(dataStorePlan.getAt(row).data["pdocid"]);
+			},
 			delay : 400
 		}
 
@@ -358,11 +365,11 @@ function submitPlan() {
 
 		break;
 	case 'pdoc':
-		if (textfieldid == '') {
+		if (textfieldpdocid == '') {
 			Ext.Msg.alert('提示', '查看工艺文件时必须指定工艺文件编号');
 			return;
 		}
-		activePlanPanel(textfieldid, textfieldtitle);
+		activePdocPanel(textfieldpdocid);
 		return;
 		break;
 	default:
@@ -412,7 +419,7 @@ function onPlan() {
 	ajaxGetText(url, bindPlanXML);
 }
 
-function changToCN(val) {
+function trueToGreen(val) {
 	if (val == true) {
 		return '<span style="color: green;">是</span>';
 	}
@@ -422,39 +429,10 @@ function changToCN(val) {
 	return '<span style="color: yellow;">错误</span>';
 }
 
-function changToRed(val) {
-	var todate = new Date();  // 得到系统日期
+function changDateToRed(val) {
+	var todate = new Date(); // 得到系统日期
 	if (val.format('Y-m-d') < todate.format('Y-m-d')) {
-		return '<span style="color: red;">'+val.format('Y-m-d')+'</span>';
+		return '<span style="color: red;">' + val.format('Y-m-d') + '</span>';
 	}
-	return '<span >'+val.format('Y-m-d')+'</span>';
-}
-
-function activePlanPanel(planid, title) {
-
-	planPlanid = planid;
-	ajaxGetText(urlGetXmlPlan(), bindPlanXML);
-
-	var n;
-	tabPanel = Ext.getCmp("tabPanel");
-	n = tabPanel.getComponent('plan');
-	if (n) {
-
-		n.show();
-		tabPanel.setActiveTab(n);
-		return;
-	}
-	n = tabPanel.add({
-		id : 'plan',
-		title : '物料清单',
-		layout : 'fit',
-		items : [ gridFormPlan ],
-
-		autoScroll : true,
-		closable : true
-	});
-
-	tabPanel.setActiveTab(n);
-
-	return;
+	return '<span >' + val.format('Y-m-d') + '</span>';
 }

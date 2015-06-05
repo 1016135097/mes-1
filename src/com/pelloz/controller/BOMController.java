@@ -99,7 +99,6 @@ public class BOMController {
 		return;
 	}
 
-	@AuthPassport(department = { "admin", "工艺室" })
 	@RequestMapping(params = "method=getbomxmlstr")
 	public void getBOMXMLStr(Integer pdocid, HttpServletRequest req, HttpServletResponse resp) {
 

@@ -22,6 +22,36 @@ function processdoc(tabPanel, btn) {
 
 }
 
+function activePdocPanel(pdocid) {
+
+	var url = "processdoc.do?method=find&id="+pdocid;
+	ajaxGetText(url, bindPdocXML);
+
+	var n;
+	tabPanel = Ext.getCmp("tabPanel");
+	n = tabPanel.getComponent('processdoc');
+	if (n) {
+
+		n.show();
+		tabPanel.setActiveTab(n);
+		return;
+	}
+	n = tabPanel.add({
+		id : 'processdoc',
+		title : '工艺文件',
+		layout : 'fit',
+		items : [ gridFormPdoc ],
+
+		autoScroll : true,
+		closable : true
+	});
+
+	tabPanel.setActiveTab(n);
+
+	return;
+
+}
+
 function bindPdocXML(xmlstr) {
 	pdocXML = loadXMLString(xmlstr);
 	dataStorePdoc.loadData(pdocXML);
@@ -40,6 +70,7 @@ var pdocs = Ext.data.Record.create([ {
 } ]);
 
 var dataStorePdoc = new Ext.data.Store({
+	sortInfo: { field: "id", direction: "ASC" },
 	reader : new Ext.data.XmlReader({
 		record : 'pdoc'// The repeated element which contains row information
 	}, pdocs)
@@ -344,32 +375,4 @@ function refreshPdoc() {
 	ajaxGetText(urlGetXmlPdoc, bindPdocXML);
 }
 
-function activeBomPanel(pdocid, title) {
 
-	bomPdocid = pdocid;
-	ajaxGetText(urlGetXmlBom(), bindBomXML);
-	gridFormBom.getComponent('bomcolumn').setTitle('BOM列表####工艺编号: ' + pdocid + '####工艺标题: ' + title);
-
-	var n;
-	tabPanel = Ext.getCmp("tabPanel");
-	n = tabPanel.getComponent('bom');
-	if (n) {
-
-		n.show();
-		tabPanel.setActiveTab(n);
-		return;
-	}
-	n = tabPanel.add({
-		id : 'bom',
-		title : '物料清单',
-		layout : 'fit',
-		items : [ gridFormBom ],
-
-		autoScroll : true,
-		closable : true
-	});
-
-	tabPanel.setActiveTab(n);
-
-	return;
-}

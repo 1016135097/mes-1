@@ -47,24 +47,24 @@ public class PlanController {
 	@Resource
 	private PdocService pdocService;
 
-	private Plan planerr;
+	private Plan errmsg;
 
 	public PlanController() {
 		super();
-		planerr = new Plan();
+		errmsg = new Plan();
 		UserInfo user = new UserInfo();
 		Pdoc pdoc = new Pdoc();
 		Date date = new Date();
 		user.setId(-1);
 		user.setFullname("错误");
 		pdoc.setId(-1);
-		planerr.setId(-1);
-		planerr.setNum(-1);
-		planerr.setUserinfo(user);
-		planerr.setPdoc(pdoc);
+		errmsg.setId(-1);
+		errmsg.setNum(-1);
+		errmsg.setUserinfo(user);
+		errmsg.setPdoc(pdoc);
 		;
-		planerr.setEndDate(date);
-		planerr.setTitle("错误");
+		errmsg.setEndDate(date);
+		errmsg.setTitle("错误");
 	}
 
 	@AuthPassport(department = { "admin", "计划室" })
@@ -124,7 +124,6 @@ public class PlanController {
 		return;
 	}
 
-	@AuthPassport(department = { "admin", "计划室" })
 	@RequestMapping(params = "method=getplanxmlstr")
 	public void getPlanXMLStr(HttpServletRequest req, HttpServletResponse resp) {
 
@@ -138,11 +137,11 @@ public class PlanController {
 
 		// 查找plan
 		try {
-			plans = this.planService.find("userinfo", user);
+			plans = this.planService.find("isComplete", false);
 		} catch (NoSuchPOException e) {
-			planerr.setTitle("提示:此用户下没有计划存在");
+			errmsg.setTitle("提示:没有未完成计划存在");
 			plans = new ArrayList<Plan>();
-			plans.add(planerr);
+			plans.add(errmsg);
 		}
 
 		// 返回XMLstr给客户端
@@ -150,7 +149,6 @@ public class PlanController {
 		return;
 	}
 
-	@AuthPassport(department = { "admin", "计划室" })
 	@RequestMapping(params = "method=find")
 	public void find(Integer id, String title, String enddate, HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
@@ -164,7 +162,7 @@ public class PlanController {
 
 		List<Plan> plans = new ArrayList<Plan>();
 		Plan plan = new Plan();
-		planerr.setTitle("提示:找不到符合条件的计划文件");
+		errmsg.setTitle("提示:找不到符合条件的计划文件");
 
 		// 查找id
 		if (id != null) {
@@ -172,7 +170,7 @@ public class PlanController {
 				plan = this.planService.find(id);
 			} catch (NoSuchPOException e) {
 				// 返回错误用户提示
-				plans.add(planerr);
+				plans.add(errmsg);
 				returnXML(plans, resp);
 				return;
 			}
@@ -188,7 +186,7 @@ public class PlanController {
 				plans = this.planService.findLike("title", title);
 			} catch (NoSuchPOException e) {
 				// 返回错误用户提示
-				plans.add(planerr);
+				plans.add(errmsg);
 				returnXML(plans, resp);
 				return;
 			}
@@ -205,8 +203,8 @@ public class PlanController {
 			try {
 				date = dateFormat.parse(enddate);
 			} catch (ParseException e1) {
-				planerr.setTitle("提示:日期格式不正确");
-				plans.add(planerr);
+				errmsg.setTitle("提示:日期格式不正确");
+				plans.add(errmsg);
 				returnXML(plans, resp);
 				return;
 			}
@@ -214,7 +212,7 @@ public class PlanController {
 			try {
 				plans = this.planService.findFromDate(date, null);
 			} catch (NoSuchPOException e2) {
-				plans.add(planerr);
+				plans.add(errmsg);
 				returnXML(plans, resp);
 				return;
 			}
@@ -225,7 +223,7 @@ public class PlanController {
 		}
 
 		// 最后都找不到
-		plans.add(planerr);
+		plans.add(errmsg);
 		returnXML(plans, resp);
 		return;
 	}
@@ -250,6 +248,24 @@ public class PlanController {
 		if (user == null) {
 			return;// 已经在权限检查中保证用户的存在，这里应该不会执行
 		}
+
+		Plan plan;
+		try {
+			plan = this.planService.find(id);
+
+			// 不是自己名下的计划不能修改，生产中计划不能修改，已经完成的计划不能修改
+			if (user.getId() != plan.getUserinfo().getId()) {
+				resp.getWriter().print("{ success: false, infos:{info: '只能修改自己名下的计划'} }");
+				return;
+			} else if (plan.isOnProducting() || plan.isComplete()) {
+				resp.getWriter().print("{ success: false, infos:{info: '生产中计划和已经完成的计划不能修改'} }");
+				return;
+			}
+		} catch (NoSuchPOException e2) {
+			resp.getWriter().print("{ success: false, infos:{info: '提交的计划编号不存在'} }");
+			return;
+		}
+
 		// 转化日期
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date;
@@ -259,34 +275,23 @@ public class PlanController {
 			resp.getWriter().print("{ success: false, infos:{info: '提交的日期格式不正确'} }");
 			return;
 		}
-		// 取得计划
+		// 取得工艺
 		Pdoc pdoc;
 		try {
 			pdoc = this.pdocService.find(pdocid);
 		} catch (NoSuchPOException e1) {
-			resp.getWriter().print("{ success: false, infos:{info: '提交的计划编号不存在'} }");
+			resp.getWriter().print("{ success: false, infos:{info: '提交的工艺文件编号不存在'} }");
 			return;
 		}
 
 		// 取得id对应的plan，修改后保存
-		Plan plan = new Plan();
-		try {
-			plan.setId(id);
-			plan.setTitle(title);
-			plan.setNum(num);
-			plan.setEndDate(date);
-			plan.setUserinfo(user);
-			plan.setPdoc(pdoc);
+		plan.setTitle(title);
+		plan.setNum(num);
+		plan.setEndDate(date);
+		plan.setUserinfo(user);
+		plan.setPdoc(pdoc);
 
-			this.planService.modify(plan);// 必须保证传入的plan不是持久化状态的
-
-		} catch (NoSuchPOException e) {
-			resp.getWriter().print("{ success: false, infos:{info: '提交的计划编号不存在'} }");
-			return;
-		} catch (POExistException e) {
-			resp.getWriter().print("{ success: false, infos:{info: ''} }"); // TODO
-			return;
-		}
+		this.planService.update(plan);
 
 		resp.getWriter().print("{ success: true, infos:{} }");
 		return;
@@ -317,9 +322,12 @@ public class PlanController {
 		try {
 			plan = this.planService.find(id);
 
-			// 不是自己名下的计划不能删除
+			// 不是自己名下的计划不能删除，生产中计划不能删除
 			if (user.getId() != plan.getUserinfo().getId()) {
 				resp.getWriter().print("{ success: false, infos:{info: '只能删除自己名下的计划'} }");
+				return;
+			} else if (plan.isOnProducting()) {
+				resp.getWriter().print("{ success: false, infos:{info: '生产中计划不能删除'} }");
 				return;
 			}
 			// 删除计划
@@ -357,8 +365,8 @@ public class PlanController {
 
 			// 不是自己名下的计划不能上线
 			if (user.getId() != plan.getUserinfo().getId()) {
-				planerr.setTitle("提示:只能上线自己名下的计划");
-				plans.add(planerr);
+				errmsg.setTitle("提示:只能上线自己名下的计划");
+				plans.add(errmsg);
 				returnXML(plans, resp);
 				return;
 			}
@@ -367,11 +375,98 @@ public class PlanController {
 			this.planService.update(plan);
 			plans.add(plan);
 		} catch (NoSuchPOException | ObjectNotFoundException e1) {
-			planerr.setTitle("提示:此用户下没有计划存在");
-			plans.add(planerr);
+			errmsg.setTitle("提示:此用户下没有计划存在");
+			plans.add(errmsg);
 		}
 
 		returnXML(plans, resp);
+		return;
+	}
+
+	@AuthPassport(department = { "admin", "车间生产" })
+	@RequestMapping(params = "method=begin")
+	public void begin(Integer id, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
+		resp.setCharacterEncoding("utf-8");// 防止中文乱码
+		resp.setContentType("text/json");
+
+		// 判断参数不为空
+		if (id == null) {
+			resp.getWriter().print("{ success: false, infos:{info: '开始生产计划时，编号不能为空'} }");
+			return;// 前台页面应该已经判断，这里应该不会执行
+		}
+
+		// 取得操作的用户
+		UserInfo user = (UserInfo) req.getSession().getAttribute("user");
+		if (user == null) {
+			return;// 已经在权限检查中保证用户的存在，这里应该不会执行
+		}
+
+		// 取得id对应的plan，判断作者是否是操作用户
+		Plan plan;
+		try {
+			plan = this.planService.find(id);
+
+			// 已经完成的计划不能修改
+			if (plan.isComplete() || !plan.isOnPlan()) {
+				resp.getWriter().print("{ success: false, infos:{info: '未上线计划和已经完成的计划不能修改'} }");
+				return;
+			}
+			// 修改计划
+			plan.setUserinfo(user);
+			plan.setOnProducting(!plan.isOnProducting());// 切换状态
+			this.planService.update(plan);
+			resp.getWriter().print("{ success: true, infos:{} }");
+		} catch (NoSuchPOException | ObjectNotFoundException e1) {
+			resp.getWriter().print("{ success: false, infos:{info: '提交的计划编号不存在'} }");
+			return;
+		}
+
+		return;
+	}
+
+	@AuthPassport(department = { "admin", "车间生产" })
+	@RequestMapping(params = "method=finish")
+	public void finish(Integer id, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
+		resp.setCharacterEncoding("utf-8");// 防止中文乱码
+		resp.setContentType("text/json");
+
+		// 判断参数不为空
+		if (id == null) {
+			resp.getWriter().print("{ success: false, infos:{info: '完成生产计划时，编号不能为空'} }");
+			return;// 前台页面应该已经判断，这里应该不会执行
+		}
+
+		// 取得操作的用户
+		UserInfo user = (UserInfo) req.getSession().getAttribute("user");
+		if (user == null) {
+			return;// 已经在权限检查中保证用户的存在，这里应该不会执行
+		}
+
+		// 取得id对应的plan，判断作者是否是操作用户
+		Plan plan;
+		try {
+			plan = this.planService.find(id);
+
+			// 不是自己名下的计划不能修改，生产中计划和已经完成的计划不能修改
+			if (plan.getUserinfo() != null && user.getId() != plan.getUserinfo().getId()) {
+				resp.getWriter().print("{ success: false, infos:{info: '只能修改自己名下的计划'} }");
+				return;
+			} else if (!plan.isOnProducting()) {
+				resp.getWriter().print("{ success: false, infos:{info: '只有生产中计划才能完成'} }");
+				return;
+			}
+			// 修改计划
+			plan.setOnProducting(false);
+			plan.setComplete(true);
+			this.planService.update(plan);
+			resp.getWriter().print("{ success: true, infos:{} }");
+		} catch (NoSuchPOException | ObjectNotFoundException e1) {
+			resp.getWriter().print("{ success: false, infos:{info: '提交的计划编号不存在'} }");
+			return;
+		}
+
 		return;
 	}
 
@@ -392,9 +487,10 @@ public class PlanController {
 			rootplan.addElement("title").addText(plan.getTitle());
 			rootplan.addElement("num").addText(String.valueOf(plan.getNum()));
 			rootplan.addElement("enddate").addText(String.valueOf(plan.getEndDate()));
-			rootplan.addElement("planner").addText(plan.getUserinfo().getFullname());
+			rootplan.addElement("user").addText(plan.getUserinfo().getFullname());
 			rootplan.addElement("onplan").addText(String.valueOf(plan.isOnPlan()));
 			rootplan.addElement("onproducting").addText(String.valueOf(plan.isOnProducting()));
+			rootplan.addElement("complete").addText(String.valueOf(plan.isComplete()));
 
 		}
 

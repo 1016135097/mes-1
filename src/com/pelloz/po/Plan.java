@@ -23,9 +23,10 @@ public class Plan {
 	private Date endDate;// 截止时间
 	private boolean isOnPlan = false;// 计划是否上线
 	private boolean isOnProducting = false;// 是否正在生产
+	private boolean isComplete = false;// 是否已经完成
 
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH })
-	private UserInfo userinfo;// 计划员
+	private UserInfo userinfo;
 	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH })
 	private Pdoc pdoc;// 工艺文件
 
@@ -61,14 +62,6 @@ public class Plan {
 		this.isOnPlan = isOnPlan;
 	}
 
-	public UserInfo getUserinfo() {
-		return userinfo;
-	}
-
-	public void setUserinfo(UserInfo userinfo) {
-		this.userinfo = userinfo;
-	}
-
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -91,6 +84,22 @@ public class Plan {
 
 	public void setNum(int num) {
 		this.num = num;
+	}
+
+	public boolean isComplete() {
+		return isComplete;
+	}
+
+	public void setComplete(boolean isComplete) {
+		this.isComplete = isComplete;
+	}
+
+	public UserInfo getUserinfo() {
+		return userinfo;
+	}
+
+	public void setUserinfo(UserInfo userinfo) {
+		this.userinfo = userinfo;
 	}
 
 }

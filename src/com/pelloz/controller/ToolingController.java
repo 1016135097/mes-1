@@ -3,6 +3,7 @@ package com.pelloz.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.pelloz.auth.AuthPassport;
 import com.pelloz.exception.NoSuchPOException;
 import com.pelloz.exception.POExistException;
+import com.pelloz.po.OrderForm;
 import com.pelloz.po.Tooling;
 import com.pelloz.po.UserInfo;
 import com.pelloz.service.ToolingService;
@@ -79,7 +81,6 @@ public class ToolingController {
 		return;
 	}
 
-	@AuthPassport(department = { "admin", "工装室", "工艺室" })
 	@RequestMapping(params = "method=gettoolingxmlstr")
 	public void getToolingXMLStr(HttpServletRequest req, HttpServletResponse resp) throws NoSuchPOException {
 
@@ -114,7 +115,6 @@ public class ToolingController {
 		return;
 	}
 
-	@AuthPassport(department = { "admin", "工装室", "工艺室" })
 	@RequestMapping(params = "method=find")
 	public void find(Integer id, String name, HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		// 优先id，然后name
@@ -322,6 +322,43 @@ public class ToolingController {
 		return;
 	}
 
+	@RequestMapping(params = "method=purchase")
+	public void purchase(Integer id, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
+		resp.setCharacterEncoding("utf-8");// 防止中文乱码
+		resp.setContentType("text/json");
+
+		// 判断参数不为空
+		if (id == null) {
+			resp.getWriter().print("{ success: false, infos:{info: '必须指定工装编号'} }");
+			return;// 前台页面应该已经判断，这里应该不会执行
+		}
+
+		// 取得操作的用户
+		UserInfo user = (UserInfo) req.getSession().getAttribute("user");
+		if (user == null) {
+			return;// 已经在权限检查中保证用户的存在，这里应该不会执行
+		}
+
+		// 取得id对应的tooling
+		Tooling tooling;
+		try {
+			tooling = this.toolingService.find(id);
+			if(user.getDepartment().equals("采购部")){
+				tooling.setNeedPurchase(!tooling.isNeedPurchase());
+			}else{
+				tooling.setNeedPurchase(true);
+			}
+			this.toolingService.update(tooling);
+			resp.getWriter().print("{ success: true, infos:{id: " + tooling.getId() + "} }");
+		} catch (NoSuchPOException | ObjectNotFoundException e1) {
+			resp.getWriter().print("{ success: false, infos:{info: '提交的工装编号不存在'} }");
+			return;
+		}
+
+		return;
+	}
+
 	/**
 	 * 将toolings转化为XMLstr，然后使用HttpServletResponse返回给客户端
 	 * 
@@ -337,7 +374,18 @@ public class ToolingController {
 			roottooling.addElement("id").addText(String.valueOf(tooling.getId()));
 			roottooling.addElement("name").addText(tooling.getName());
 			roottooling.addElement("amount").addText(String.valueOf(tooling.getAmount()));
+			roottooling.addElement("needpurchase").addText(String.valueOf(tooling.isNeedPurchase()));
 
+			int orderamount = 0;
+			Set<OrderForm> orders = tooling.getOrderforms();
+			if (orders == null || orders.size() == 0) {
+				roottooling.addElement("numonpurchase").addText("0");
+			} else {
+				for (OrderForm orderForm : orders) {
+					orderamount += orderForm.getAmount();
+				}
+				roottooling.addElement("numonpurchase").addText(String.valueOf(orderamount));
+			}
 		}
 
 		// 返回xmlstr

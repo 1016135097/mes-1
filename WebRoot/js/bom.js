@@ -11,6 +11,37 @@ function urlGetXmlBom() {
 	return urlBom + "?method=getbomxmlstr&pdocid=" + bomPdocid;
 }
 
+
+function activeBomPanel(pdocid, title) {
+
+	bomPdocid = pdocid;
+	ajaxGetText(urlGetXmlBom(), bindBomXML);
+	gridFormBom.getComponent('bomcolumn').setTitle('BOM列表####工艺编号: ' + pdocid + '####工艺标题: ' + title);
+
+	var n;
+	//tabPanel = Ext.getCmp("tabPanel"); //TODO
+	n = tabPanel.getComponent('bom');
+	if (n) {
+		n.show();
+		tabPanel.setActiveTab(n);
+		return;
+	}
+	n = tabPanel.add({
+		id : 'bom',
+		title : '物料清单',
+		layout : 'fit',
+		items : [ gridFormBom ],
+
+		autoScroll : true,
+		closable : true
+	});
+
+	tabPanel.setActiveTab(n);
+
+	return;
+}
+
+
 function bindBomXML(xmlstr) {
 	bomXML = loadXMLString(xmlstr);
 	dataStoreBom.loadData(bomXML);
@@ -34,6 +65,7 @@ var boms = Ext.data.Record.create([ {
 } ]);
 
 var dataStoreBom = new Ext.data.Store({
+	sortInfo: { field: "id", direction: "ASC" },
 	reader : new Ext.data.XmlReader({
 		record : "bom",
 	}, boms)
@@ -70,6 +102,13 @@ var colModelBom = new Ext.grid.ColumnModel([ {
 	header : "库存数量",
 	width : 80,
 	sortable : true,
+	renderer : function(value, metaData, record, rowIndex, colIndex, store) {
+		needNum = dataStoreBom.getAt(rowIndex).data["amount"];
+		if (value < needNum * 2) {
+			return '<span style="color: red;">' + value + '</span>';
+		}
+		return '<span >' + value + '</span>';
+	},
 	dataIndex : 'inventory'
 } ]);
 
@@ -102,13 +141,16 @@ var gridFormBom = new Ext.FormPanel({
 			render : function(g) {
 				g.getSelectionModel().selectRow(0);
 			},
-			delay : 200
+			rowdblclick : function(grid, row) {
+				activeToolingPanel(dataStoreBom.getAt(row).data["toolingid"]);
+			},
+			delay : 400
 		}
 
 	}, {
 		frame : true,
-		width: 350,
-		//columnWidth : 0.35,
+		width : 350,
+		// columnWidth : 0.35,
 		xtype : 'fieldset',
 		labelWidth : 60,
 		title : '&nbsp;BOM详情',
@@ -165,6 +207,10 @@ var gridFormBom = new Ext.FormPanel({
 				boxLabel : '删除',
 				name : 'method',
 				inputValue : 'delete'
+			}, {
+				boxLabel : '查看工装',
+				name : 'method',
+				inputValue : 'tooling'
 			} ],
 			listeners : {
 				change : function(radiogroup, checkedradio) {
@@ -190,6 +236,12 @@ var gridFormBom = new Ext.FormPanel({
 						textfieldid.reset();
 						textfieldtoolingid.disable();
 						textfieldtoolingid.reset();
+						textfieldamount.disable();
+						textfieldamount.reset();
+						break;
+					case 'tooling':
+						textfieldid.disable();
+						textfieldtoolingid.enable();
 						textfieldamount.disable();
 						textfieldamount.reset();
 						break;
@@ -252,6 +304,14 @@ function submitBom() {
 			Ext.Msg.alert('提示', '删除工艺时编号必须指定');
 			return;
 		}
+		break;
+	case 'tooling':
+		if (textfieldtoolingid == '') {
+			Ext.Msg.alert('提示', '必须指定工装编号');
+			return;
+		}
+		activeToolingPanel(textfieldtoolingid);
+		return;
 		break;
 	default:
 		Ext.Msg.alert('提示', '系统错误，请完整加载页面再操作');

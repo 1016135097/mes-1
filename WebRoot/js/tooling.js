@@ -24,6 +24,34 @@ function tooling(tabPanel, btn) {
 	ajaxGetText(urlGetXmlTooling, bindToolingXML);
 }
 
+function activeToolingPanel(toolingid){
+	
+	var url = "tooling.do?method=find&id="+toolingid;
+	ajaxGetText(url, bindToolingXML);
+
+	var n;
+	//tabPanel = Ext.getCmp("tabPanel"); //TODO
+	n = tabPanel.getComponent('tooling');
+	if (n) {
+		n.show();
+		tabPanel.setActiveTab(n);
+		return;
+	}
+	n = tabPanel.add({
+		id : 'tooling',
+		title : '工装管理',
+		layout : 'fit',
+		items : [ gridFormTooling ],
+
+		autoScroll : true,
+		closable : true
+	});
+
+	tabPanel.setActiveTab(n);
+
+	return;
+}
+
 function bindToolingXML(xmlstr) {
 	toolingXML = loadXMLString(xmlstr);
 	dataStoreTooling.loadData(toolingXML);
@@ -38,9 +66,19 @@ var toolings = Ext.data.Record.create([ {
 }, {
 	name : 'amount',
 	type : 'int'
+}, {
+	name : 'needpurchase',
+	type : 'boolean'
+}, {
+	name : 'numonpurchase',
+	type : 'int'
 } ]);
 
 var dataStoreTooling = new Ext.data.Store({
+	sortInfo : {
+		field : "id",
+		direction : "ASC"
+	},
 	reader : new Ext.data.XmlReader({
 		record : "tooling",
 	}, toolings)
@@ -66,6 +104,19 @@ var colModelTooling = new Ext.grid.ColumnModel([ {
 	width : 80,
 	sortable : true,
 	dataIndex : 'amount'
+}, {
+	id : 'needpurchase',
+	header : "需要购买",
+	width : 80,
+	sortable : true,
+	renderer : trueToRed,
+	dataIndex : 'needpurchase'
+}, {
+	id : 'numonpurchase',
+	header : "购买中数量",
+	width : 100,
+	sortable : true,
+	dataIndex : 'numonpurchase'
 } ]);
 
 var gridFormTooling = new Ext.FormPanel({
@@ -102,8 +153,8 @@ var gridFormTooling = new Ext.FormPanel({
 
 	}, {
 		frame : true,
-		width: 350,
-		//columnWidth : 0.35,
+		width : 350,
+		// columnWidth : 0.35,
 		xtype : 'fieldset',
 		labelWidth : 60,
 		title : '&nbsp;工装详情',
@@ -176,6 +227,10 @@ var gridFormTooling = new Ext.FormPanel({
 				boxLabel : '删除',
 				name : 'method',
 				inputValue : 'delete'
+			}, {
+				boxLabel : '购买申请',
+				name : 'method',
+				inputValue : 'purchase'
 			} ],
 			listeners : {
 				change : function(radiogroup, checkedradio) {
@@ -236,6 +291,15 @@ var gridFormTooling = new Ext.FormPanel({
 						textfieldamount.disable();
 						textfieldamount.reset();
 						break;
+					case 'purchase':
+						textfieldid.enable();
+						textfieldname.disable();
+						textfieldname.reset();
+						textfieldopernum.disable();
+						textfieldopernum.reset();
+						textfieldamount.disable();
+						textfieldamount.reset();
+						break;
 					default:
 						;
 						break;
@@ -250,12 +314,15 @@ var gridFormTooling = new Ext.FormPanel({
 		buttons : [ {
 			text : '提交',
 			style : 'margin-left:60px',
+			width : 55,
 			handler : submitTooling
 		}, {
 			text : '清空',
+			width : 55,
 			handler : resetTooling
 		}, {
 			text : '刷新列表',
+			width : 55,
 			handler : refreshTooling
 		} ]
 	} ]
@@ -315,7 +382,13 @@ function submitTooling() {
 		break;
 	case 'delete':
 		if (textfieldid == '') {
-			Ext.Msg.alert('提示', '删除工艺时编号必须指定');
+			Ext.Msg.alert('提示', '删除工装编号必须指定');
+			return;
+		}
+		break;
+	case 'purchase':
+		if (textfieldid == '') {
+			Ext.Msg.alert('提示', '必须指定工装编号');
 			return;
 		}
 		break;
@@ -361,3 +434,15 @@ function resetTooling() {
 function refreshTooling() {
 	ajaxGetText(urlGetXmlTooling, bindToolingXML);
 }
+
+
+function trueToRed(val) {
+	if (val == true) {
+		return '<span style="color: red;">是</span>';
+	}
+	if (val == false) {
+		return '<span style="color: green;">否</span>';
+	}
+	return '<span style="color: yellow;">错误</span>';
+}
+

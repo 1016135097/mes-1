@@ -75,14 +75,13 @@ public class ProcessDocController {
 		return;
 	}
 
-	@AuthPassport(department = { "admin", "工艺室" })
 	@RequestMapping(params = "method=getpdocxmlstr")
 	public void getPdocXMLStr(HttpServletRequest req, HttpServletResponse resp) {
 
 		// 取得操作用户
 		UserInfo user = (UserInfo) req.getSession().getAttribute("user");
 		if (user == null) {
-			return;// 已经在权限检查中保证用户的存在，这里应该不会执行
+			return;
 		}
 
 		List<Pdoc> pdocs;
@@ -107,7 +106,6 @@ public class ProcessDocController {
 		return;
 	}
 
-	@AuthPassport(department = { "admin", "工艺室" })
 	@RequestMapping(params = "method=find")
 	public void find(Integer id, String title, String author, HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {

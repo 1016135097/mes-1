@@ -44,35 +44,12 @@ padding-left: 25px;
 		<script type="text/javascript" src="js/pelloz.js"></script>
 		<!-- 通过JSP脚本动态指定需要加载的js文件 -->
 <%
-switch(user.getDepartment()){
-	case "admin": 
 		out.println("<script type='text/javascript' src='js/bom.js'></script>");
 		out.println("<script type='text/javascript' src='js/processdoc.js'></script>");
 		out.println("<script type='text/javascript' src='js/tooling.js'></script>");
 		out.println("<script type='text/javascript' src='js/plan.js'></script>");
-	break;
-	case "工艺室": 
-		out.println("<script type='text/javascript' src='js/bom.js'></script>");
-		out.println("<script type='text/javascript' src='js/processdoc.js'></script>");
-		out.println("<script type='text/javascript' src='js/tooling.js'></script>");
-	break;
-	case "车间生产": 
-		;
-	break;
-	case "工装室": 
-		out.println("<script type='text/javascript' src='js/tooling.js'></script>");
-		;
-	break;
-	case "计划室": 
-		out.println("<script type='text/javascript' src='js/bom.js'></script>");
-		out.println("<script type='text/javascript' src='js/processdoc.js'></script>");
-		out.println("<script type='text/javascript' src='js/plan.js'></script>");
-		;
-	break;
-	case "采购部": 
-		;
-	break;
-}
+		out.println("<script type='text/javascript' src='js/manufacture.js'></script>");
+	
 %>
 <script type="text/javascript">
 
@@ -95,9 +72,9 @@ switch(user.getDepartment()){
 				break;
 			case 'productplan':plan(tabPanel,btn);
 				break;
-			case 'productarrange':productarrange(tabPanel,btn);
+			case 'manufacture':manufacture(tabPanel,btn);
 				break;
-			case 'fixturemanage':tooling(tabPanel,btn);
+			case 'tooling':tooling(tabPanel,btn);
 				break;
 			case 'inventory':inventory(tabPanel,btn);
 				break;
@@ -152,7 +129,7 @@ if(department.equals("admin")||department.equals("工艺室")){
 			}),
 			
 			new Ext.Button({
-				id : 'fixturemanage',
+				id : 'tooling',
 				text : '工装管理',
 				width : '100%',
 				listeners : {
@@ -175,17 +152,7 @@ var item2 = new Ext.Panel( {
 	cls : 'empty',
 	items : [ 
 		new Ext.Button({
-			id : 'productplan',
-			text : '生产计划',
-			width : '100%',
-			listeners : {
-				click : addPanel
-			}
-
-		}),
-
-		new Ext.Button({
-			id : 'productarrange',
+			id : 'manufacture',
 			text : '安排生产',
 			width : '100%',
 			listeners : {
@@ -209,7 +176,7 @@ var item3 = new Ext.Panel( {
 	cls : 'empty',
 	items : [ 
 		new Ext.Button({
-			id : 'fixturemanage',
+			id : 'tooling',
 			text : '工装管理',
 			width : '100%',
 			listeners : {
