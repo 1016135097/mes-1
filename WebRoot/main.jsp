@@ -23,12 +23,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<link rel="stylesheet" type="text/css" href="css/clear.css" />
 		<link rel="stylesheet" type="text/css" href="css/pelloz.css" />
 <style type="text/css">
+/* 防止chrome下日期选择的bug */
 .x-date-picker{
 border: 1px solid;
 border-top:0 none;
 position:relative;
 width: 185px;
 }
+/* 防止日期选择按钮遮挡文字 */
 .x-form-field{
 padding-left: 25px;
 }
@@ -44,11 +46,13 @@ padding-left: 25px;
 		<script type="text/javascript" src="js/pelloz.js"></script>
 		<!-- 通过JSP脚本动态指定需要加载的js文件 -->
 <%
+		out.println("<script type='text/javascript' src='js/messupport.js'></script>");
 		out.println("<script type='text/javascript' src='js/bom.js'></script>");
 		out.println("<script type='text/javascript' src='js/processdoc.js'></script>");
 		out.println("<script type='text/javascript' src='js/tooling.js'></script>");
 		out.println("<script type='text/javascript' src='js/plan.js'></script>");
 		out.println("<script type='text/javascript' src='js/manufacture.js'></script>");
+		out.println("<script type='text/javascript' src='js/order.js'></script>");
 	
 %>
 <script type="text/javascript">
@@ -78,7 +82,7 @@ padding-left: 25px;
 				break;
 			case 'inventory':inventory(tabPanel,btn);
 				break;
-			case 'buyingrequire':buyingrequire(tabPanel,btn);
+			case 'buyingorder':buyingorder(tabPanel,btn);
 				break;
 			case 'system': system(tabPanel,btn);
 				break;
@@ -94,13 +98,11 @@ padding-left: 25px;
 				   msg: '确认退出系统？',
 				   buttons: Ext.Msg.YESNO,
 				   fn: processResult,
-				   //animEl: 'elId',//动画效果
 				   icon: Ext.MessageBox.QUESTION
 				});
 		}
 		
 		function processResult(btn) {
-            //Ext.Msg.alert('结果', btn);
 			if (btn=="yes")
 				{
 					window.parent.location="index.jsp";
@@ -154,6 +156,16 @@ var item2 = new Ext.Panel( {
 		new Ext.Button({
 			id : 'manufacture',
 			text : '安排生产',
+			width : '100%',
+			listeners : {
+				click : addPanel
+			}
+
+		}),
+		
+		new Ext.Button({
+			id : 'processdoc',
+			text : '工艺文件',
 			width : '100%',
 			listeners : {
 				click : addPanel
@@ -216,6 +228,15 @@ var item4 = new Ext.Panel( {
 			}
 
 		}),
+		
+		new Ext.Button({
+			id : 'tooling',
+			text : '工装管理',
+			width : '100%',
+			listeners : {
+				click : addPanel
+			}
+		})
 
 		]
 });
@@ -232,13 +253,22 @@ var item5 = new Ext.Panel( {
 	cls : 'empty',
 	items : [ 
 		new Ext.Button({
-			id : 'buyingrequire',
-			text : '采购需求',
+			id : 'buyingorder',
+			text : '采购下单',
 			width : '100%',
 			listeners : {
 				click : addPanel
 			}
 
+		}),
+		
+		new Ext.Button({
+			id : 'tooling',
+			text : '工装管理',
+			width : '100%',
+			listeners : {
+				click : addPanel
+			}
 		})
 		]
 });
@@ -304,10 +334,7 @@ var item5 = new Ext.Panel( {
 			    minSize: 75,
 			    maxSize: 250,
 			    cmargins: '5 0 0 0',
-			    //scripts: true,
 			    items : [ {
-					//title : 'top',
-					//autoLoad : 'head.jsp'
 					autoLoad : {url: 'head.jsp', scripts: true}
 				} ]
 			

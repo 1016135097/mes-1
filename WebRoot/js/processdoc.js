@@ -87,13 +87,13 @@ var colModelPdoc = new Ext.grid.ColumnModel([ {
 }, {
 	id : 'pdoctitle',
 	header : "标题",
-	width : 100,
+	width : 150,
 	sortable : true,
 	dataIndex : 'title'
 }, {
 	id : 'pdoccontent',
 	header : "内容",
-	width : 300,
+	width : 250,
 	sortable : true,
 	dataIndex : 'content'
 }, {

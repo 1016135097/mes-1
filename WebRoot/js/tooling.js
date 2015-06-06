@@ -24,13 +24,13 @@ function tooling(tabPanel, btn) {
 	ajaxGetText(urlGetXmlTooling, bindToolingXML);
 }
 
-function activeToolingPanel(toolingid){
-	
-	var url = "tooling.do?method=find&id="+toolingid;
+function activeToolingPanel(toolingid) {
+
+	var url = "tooling.do?method=find&id=" + toolingid;
 	ajaxGetText(url, bindToolingXML);
 
 	var n;
-	//tabPanel = Ext.getCmp("tabPanel"); //TODO
+	tabPanel = Ext.getCmp("tabPanel");
 	n = tabPanel.getComponent('tooling');
 	if (n) {
 		n.show();
@@ -153,13 +153,13 @@ var gridFormTooling = new Ext.FormPanel({
 
 	}, {
 		frame : true,
-		width : 350,
+		width : 400,
 		// columnWidth : 0.35,
 		xtype : 'fieldset',
 		labelWidth : 60,
 		title : '&nbsp;工装详情',
 		defaults : {
-			width : 300,
+			width : 280,
 			border : false
 		}, // Default config options for child items
 		defaultType : 'textfield',
@@ -228,7 +228,7 @@ var gridFormTooling = new Ext.FormPanel({
 				name : 'method',
 				inputValue : 'delete'
 			}, {
-				boxLabel : '购买申请',
+				boxLabel : '申购状态',
 				name : 'method',
 				inputValue : 'purchase'
 			} ],
@@ -434,15 +434,3 @@ function resetTooling() {
 function refreshTooling() {
 	ajaxGetText(urlGetXmlTooling, bindToolingXML);
 }
-
-
-function trueToRed(val) {
-	if (val == true) {
-		return '<span style="color: red;">是</span>';
-	}
-	if (val == false) {
-		return '<span style="color: green;">否</span>';
-	}
-	return '<span style="color: yellow;">错误</span>';
-}
-

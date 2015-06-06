@@ -370,8 +370,15 @@ public class PlanController {
 				returnXML(plans, resp);
 				return;
 			}
-			// 上线计划
-			plan.setOnPlan(true);
+			// 已经在生产或者已经完成的计划不能修改
+			if (plan.isOnProducting() || plan.isComplete()) {
+				errmsg.setTitle("提示:已经在生产或者已经完成的计划不能修改");
+				plans.add(errmsg);
+				returnXML(plans, resp);
+				return;
+			}
+			// 上线/下线计划
+			plan.setOnPlan(!plan.isOnPlan());
 			this.planService.update(plan);
 			plans.add(plan);
 		} catch (NoSuchPOException | ObjectNotFoundException e1) {
@@ -407,9 +414,12 @@ public class PlanController {
 		try {
 			plan = this.planService.find(id);
 
-			// 已经完成的计划不能修改
-			if (plan.isComplete() || !plan.isOnPlan()) {
-				resp.getWriter().print("{ success: false, infos:{info: '未上线计划和已经完成的计划不能修改'} }");
+			// 不是自己名下的计划不能修改，已经完成的计划不能修改
+			if (plan.getUserinfo() != null && user.getId() != plan.getUserinfo().getId()) {
+				resp.getWriter().print("{ success: false, infos:{info: '只能修改自己名下的计划'} }");
+				return;
+			} else if (plan.isComplete()) {
+				resp.getWriter().print("{ success: false, infos:{info: '已经完成的计划不能修改'} }");
 				return;
 			}
 			// 修改计划
@@ -449,7 +459,7 @@ public class PlanController {
 		try {
 			plan = this.planService.find(id);
 
-			// 不是自己名下的计划不能修改，生产中计划和已经完成的计划不能修改
+			// 不是自己名下的计划不能修改，只有生产中计划才能完成
 			if (plan.getUserinfo() != null && user.getId() != plan.getUserinfo().getId()) {
 				resp.getWriter().print("{ success: false, infos:{info: '只能修改自己名下的计划'} }");
 				return;

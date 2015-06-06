@@ -25,7 +25,7 @@ public class Tooling {
 
 	private boolean needPurchase = false;
 
-	@OneToMany(mappedBy = "userinfo", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "tooling", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	private Set<OrderForm> orderforms = new HashSet<OrderForm>();
 
 	public int getId() {

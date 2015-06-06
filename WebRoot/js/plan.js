@@ -57,7 +57,10 @@ var plans = Ext.data.Record.create([ {
 } ]);
 
 var dataStorePlan = new Ext.data.Store({
-	sortInfo: { field: "id", direction: "ASC" },
+	sortInfo : {
+		field : "id",
+		direction : "ASC"
+	},
 	reader : new Ext.data.XmlReader({
 		record : "plan",// The repeated element which contains row information
 	}, plans)
@@ -158,13 +161,13 @@ var gridFormPlan = new Ext.FormPanel({
 
 	}, {
 		frame : true,
-		width : 350,
+		width : 400,
 		// columnWidth : 0.35,
 		xtype : 'fieldset',
 		labelWidth : 60,
 		title : '&nbsp;计划详情',
 		defaults : {
-			width : 300,
+			width : 280,
 			border : false
 		}, // Default config options for child items
 		defaultType : 'textfield',
@@ -417,22 +420,4 @@ function onPlan() {
 	}
 	url = urlPlan + "?method=onplan&id=" + textfieldid;
 	ajaxGetText(url, bindPlanXML);
-}
-
-function trueToGreen(val) {
-	if (val == true) {
-		return '<span style="color: green;">是</span>';
-	}
-	if (val == false) {
-		return '<span style="color: red;">否</span>';
-	}
-	return '<span style="color: yellow;">错误</span>';
-}
-
-function changDateToRed(val) {
-	var todate = new Date(); // 得到系统日期
-	if (val.format('Y-m-d') < todate.format('Y-m-d')) {
-		return '<span style="color: red;">' + val.format('Y-m-d') + '</span>';
-	}
-	return '<span >' + val.format('Y-m-d') + '</span>';
 }

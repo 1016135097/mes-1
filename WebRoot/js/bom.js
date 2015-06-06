@@ -19,7 +19,7 @@ function activeBomPanel(pdocid, title) {
 	gridFormBom.getComponent('bomcolumn').setTitle('BOM列表####工艺编号: ' + pdocid + '####工艺标题: ' + title);
 
 	var n;
-	//tabPanel = Ext.getCmp("tabPanel"); //TODO
+	tabPanel = Ext.getCmp("tabPanel");
 	n = tabPanel.getComponent('bom');
 	if (n) {
 		n.show();
@@ -149,13 +149,13 @@ var gridFormBom = new Ext.FormPanel({
 
 	}, {
 		frame : true,
-		width : 350,
+		width : 400,
 		// columnWidth : 0.35,
 		xtype : 'fieldset',
 		labelWidth : 60,
 		title : '&nbsp;BOM详情',
 		defaults : {
-			width : 300,
+			width : 280,
 			border : false
 		}, // Default config options for child items
 		defaultType : 'textfield',

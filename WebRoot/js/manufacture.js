@@ -161,13 +161,13 @@ var gridFormManufacture = new Ext.FormPanel({
 
 	}, {
 		frame : true,
-		width : 350,
+		width : 400,
 		// columnWidth : 0.35,
 		xtype : 'fieldset',
 		labelWidth : 60,
 		title : '&nbsp;计划详情',
 		defaults : {
-			width : 300,
+			width : 280,
 			border : false
 		}, // Default config options for child items
 		defaultType : 'textfield',

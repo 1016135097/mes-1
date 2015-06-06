@@ -21,6 +21,7 @@ public class OrderForm {
 	private double price;// 单价
 	@Temporal(TemporalType.DATE)
 	private Date date;// 订单预计完成时间
+	private boolean isComplete = false;// 是否已经完成
 
 	@ManyToOne(cascade = { CascadeType.MERGE })
 	private UserInfo userinfo;// 订单发起人
@@ -86,6 +87,14 @@ public class OrderForm {
 
 	public void setAmount(int amount) {
 		this.amount = amount;
+	}
+
+	public boolean isComplete() {
+		return isComplete;
+	}
+
+	public void setComplete(boolean isComplete) {
+		this.isComplete = isComplete;
 	}
 
 }

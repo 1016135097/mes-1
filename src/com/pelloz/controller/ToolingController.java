@@ -89,10 +89,6 @@ public class ToolingController {
 		if (user == null) {
 			return;// 已经在权限检查中保证用户的存在，这里应该不会执行
 		}
-		System.out.println(user.getClass().getPackage());
-		System.out.println(user.getClass().getName());
-		System.out.println(user.getClass().getSimpleName());
-		System.out.println(user.getClass().getPackage().getName());
 
 		List<Tooling> toolings;
 		Tooling toolingerr;// 查找的工装不存在时返回的提示
@@ -344,9 +340,9 @@ public class ToolingController {
 		Tooling tooling;
 		try {
 			tooling = this.toolingService.find(id);
-			if(user.getDepartment().equals("采购部")){
+			if (user.getDepartment().equals("采购部")) {
 				tooling.setNeedPurchase(!tooling.isNeedPurchase());
-			}else{
+			} else {
 				tooling.setNeedPurchase(true);
 			}
 			this.toolingService.update(tooling);
@@ -382,7 +378,9 @@ public class ToolingController {
 				roottooling.addElement("numonpurchase").addText("0");
 			} else {
 				for (OrderForm orderForm : orders) {
-					orderamount += orderForm.getAmount();
+					if (!orderForm.isComplete()) {
+						orderamount += orderForm.getAmount();
+					}
 				}
 				roottooling.addElement("numonpurchase").addText(String.valueOf(orderamount));
 			}
