@@ -53,7 +53,7 @@ var orders = Ext.data.Record.create([ {
 	name : 'complete',
 	type : 'boolean'
 }, {
-	name : 'user',
+	name : 'user'
 } ]);
 
 var dataStoreOrder = new Ext.data.Store({
@@ -63,6 +63,7 @@ var dataStoreOrder = new Ext.data.Store({
 	},
 	reader : new Ext.data.XmlReader({
 		record : "order",// The repeated element which contains row information
+		id: "id"
 	}, orders)
 });
 
@@ -155,6 +156,9 @@ var gridFormOrder = new Ext.FormPanel({
 				g.getSelectionModel().selectRow(0);
 			},
 			rowdblclick : function(grid, row) {
+				if (dataStoreOrder.getAt(row).data["toolingid"] <= 0) {
+					return;
+				}
 				activeToolingPanel(dataStoreOrder.getAt(row).data["toolingid"]);
 			},
 			delay : 400
@@ -219,7 +223,7 @@ var gridFormOrder = new Ext.FormPanel({
 			format : 'Y-m-d'
 		}, {
 			xtype : 'radiogroup',
-			style : 'padding-left: 0px',// TODO
+			style : 'padding-left: 0px',
 			id : 'ordermethod',
 			fieldLabel : '操作',
 			columns : 3,
@@ -372,10 +376,6 @@ function submitOrder() {
 
 	switch (method) {
 	case 'add':
-		if (textfieldid != '') {
-			Ext.Msg.alert('提示', '添加订单不能指定编号');
-			return;
-		}
 		if (textfieldtitle == '' || textfieldtoolingid == '' || textfieldamount == '' || textfielddate == ''
 				|| textfieldprice == '') {
 			Ext.Msg.alert('提示', '添加订单必须填写标题、工装编号，数量，单价和完成日期');

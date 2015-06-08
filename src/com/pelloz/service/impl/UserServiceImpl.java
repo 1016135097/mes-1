@@ -112,9 +112,17 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public void update(UserInfo pobject) {
-		// TODO Auto-generated method stub
-		
+	public List<UserInfo> findAll() throws NoSuchPOException {
+		List<UserInfo> userinfos = this.userDao.findAll();
+		if (userinfos == null || userinfos.size() == 0) {
+			throw new NoSuchPOException("系统中现在没有任何工装");
+		}
+		return userinfos;
+	}
+	
+	@Override
+	public void update(UserInfo userinfo){
+		this.userDao.update(userinfo);
 	}
 
 	public UserDao getUserDao() {

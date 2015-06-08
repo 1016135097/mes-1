@@ -142,6 +142,9 @@ var gridFormBom = new Ext.FormPanel({
 				g.getSelectionModel().selectRow(0);
 			},
 			rowdblclick : function(grid, row) {
+				if (dataStoreBom.getAt(row).data["toolingid"] <= 0) {
+					return;
+				}
 				activeToolingPanel(dataStoreBom.getAt(row).data["toolingid"]);
 			},
 			delay : 400
@@ -190,6 +193,7 @@ var gridFormBom = new Ext.FormPanel({
 			hidden : true
 		}, {
 			xtype : 'radiogroup',
+			style : 'padding-left: 0px',
 			id : 'bommethod',
 			fieldLabel : '操作',
 			columns : 3,
@@ -283,10 +287,6 @@ function submitBom() {
 
 	switch (method) {
 	case 'add':
-		if (textfieldid != '') {
-			Ext.Msg.alert('提示', '添加BOM不能指定编号');
-			return;
-		}
 		if (textfieldtoolingid == '' || textfieldamount == '') {
 			Ext.Msg.alert('提示', '添加BOM必须填写名称和总量');
 			return;

@@ -31,8 +31,11 @@ body {
 	</div>
 	<div class="right">
 		<div id="rightup">
-			<br /> <br /> <span class="bold">欢迎试用本MES系统<br /> Created
-				By 张鹏
+			<br /> <br /> <span class="bold">
+			欢迎试用本MES系统<br />
+			本系统暂时只适配了Chrome和FireFox <br />
+			IE无法正常使用本系统 <br />
+			Created By 张鹏
 				<div class="email" onclick="copyText('pellozhang@163.com','insert')">
 					pellozhang@163.com<br />
 					<span id="insert"> </span>

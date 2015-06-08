@@ -198,6 +198,7 @@ var gridFormTooling = new Ext.FormPanel({
 		// disabled 的元素不会被 submit
 		}, {
 			xtype : 'radiogroup',
+			style : 'padding-left: 0px',
 			id : 'toolingmethod',
 			fieldLabel : '操作',
 			columns : 3,
@@ -365,10 +366,6 @@ function submitTooling() {
 		}
 		break;
 	case 'add':
-		if (textfieldid != '') {
-			Ext.Msg.alert('提示', '添加工装不能指定编号');
-			return;
-		}
 		if (textfieldname == '' || textfieldamount == '') {
 			Ext.Msg.alert('提示', '添加工装必须填写名称和总量');
 			return;

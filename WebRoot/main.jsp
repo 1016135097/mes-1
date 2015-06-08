@@ -53,7 +53,7 @@ padding-left: 25px;
 		out.println("<script type='text/javascript' src='js/plan.js'></script>");
 		out.println("<script type='text/javascript' src='js/manufacture.js'></script>");
 		out.println("<script type='text/javascript' src='js/order.js'></script>");
-	
+		out.println("<script type='text/javascript' src='js/usermgr.js'></script>");
 %>
 <script type="text/javascript">
 
@@ -84,7 +84,7 @@ padding-left: 25px;
 				break;
 			case 'buyingorder':buyingorder(tabPanel,btn);
 				break;
-			case 'system': system(tabPanel,btn);
+			case 'usermgr': usermgr(tabPanel,btn);
 				break;
 			default:;
 				break;
@@ -280,16 +280,21 @@ var item5 = new Ext.Panel( {
 			title : '系统管理',
 			cls : 'empty',
 			items : [ 
+<%
+if(department.equals("admin")){
+%>
 				new Ext.Button({
-					id : 'system',
-					text : '系统管理',
+					id : 'usermgr',
+					text : '用户管理',
 					width : '100%',
 					listeners : {
 						click : addPanel
 					}
 
 				}),
-
+<%
+}
+%>
 				new Ext.Button({
 					id : 'quit',
 					text : '退出系统',
@@ -322,6 +327,7 @@ var item5 = new Ext.Panel( {
 			activeTab : 0,
 			items : [ {
 				title : '首页',
+				autoScroll : true,
 				autoLoad : 'webpage/mainpage.html'
 			} ]
 		});
@@ -338,7 +344,7 @@ var item5 = new Ext.Panel( {
 					autoLoad : {url: 'head.jsp', scripts: true}
 				} ]
 			
-		})
+		});
 
 		var viewport = new Ext.Viewport( {
 			renderTo: 'mainbody',

@@ -24,7 +24,7 @@ function processdoc(tabPanel, btn) {
 
 function activePdocPanel(pdocid) {
 
-	var url = "processdoc.do?method=find&id="+pdocid;
+	var url = "processdoc.do?method=find&id=" + pdocid;
 	ajaxGetText(url, bindPdocXML);
 
 	var n;
@@ -70,7 +70,10 @@ var pdocs = Ext.data.Record.create([ {
 } ]);
 
 var dataStorePdoc = new Ext.data.Store({
-	sortInfo: { field: "id", direction: "ASC" },
+	sortInfo : {
+		field : "id",
+		direction : "ASC"
+	},
 	reader : new Ext.data.XmlReader({
 		record : 'pdoc'// The repeated element which contains row information
 	}, pdocs)
@@ -134,6 +137,9 @@ var gridFormPdoc = new Ext.FormPanel({
 				g.getSelectionModel().selectRow(0);
 			},
 			rowdblclick : function(grid, row) {
+				if (dataStorePdoc.getAt(row).data["id"] <= 0) {
+					return;
+				}
 				activeBomPanel(dataStorePdoc.getAt(row).data["id"], dataStorePdoc.getAt(row).data["title"]);
 			},
 			delay : 400
@@ -141,13 +147,13 @@ var gridFormPdoc = new Ext.FormPanel({
 
 	}, {
 		frame : true,
-		width: 350,
-		//columnWidth : 0.35,
+		width : 400,
+		// columnWidth : 0.35,
 		xtype : 'fieldset',
 		labelWidth : 60,
 		title : '&nbsp;工艺文件详情',
 		defaults : {
-			width : 300,
+			width : 280,
 			border : false
 		}, // Default config options for child items
 		defaultType : 'textfield',
@@ -180,6 +186,7 @@ var gridFormPdoc = new Ext.FormPanel({
 			name : 'author'
 		}, {
 			xtype : 'radiogroup',
+			style : 'padding-left: 0px',
 			id : 'pdocmethod',
 			fieldLabel : '操作',
 			columns : 3,
@@ -256,7 +263,6 @@ var gridFormPdoc = new Ext.FormPanel({
 					}
 
 				}
-			// Allow rows to be rendered.
 			}
 		} ],
 
@@ -290,10 +296,6 @@ function submitPdoc() {
 
 	switch (method) {
 	case 'add':
-		if (textfieldid != '') {
-			Ext.Msg.alert('提示', '添加工艺不能指定编号');
-			return;
-		}
 		if (textfieldauthor != '') {
 			Ext.Msg.alert('提示', '添加工艺不能指定作者');
 			return;
@@ -374,5 +376,3 @@ function resetPdoc() {
 function refreshPdoc() {
 	ajaxGetText(urlGetXmlPdoc, bindPdocXML);
 }
-
-

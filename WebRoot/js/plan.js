@@ -154,6 +154,9 @@ var gridFormPlan = new Ext.FormPanel({
 				g.getSelectionModel().selectRow(0);
 			},
 			rowdblclick : function(grid, row) {
+				if (dataStorePlan.getAt(row).data["pdocid"] <= 0) {
+					return;
+				}
 				activePdocPanel(dataStorePlan.getAt(row).data["pdocid"]);
 			},
 			delay : 400
@@ -212,6 +215,7 @@ var gridFormPlan = new Ext.FormPanel({
 
 		}, {
 			xtype : 'radiogroup',
+			style : 'padding-left: 0px',
 			id : 'planmethod',
 			fieldLabel : '操作',
 			columns : 3,
@@ -333,10 +337,6 @@ function submitPlan() {
 
 	switch (method) {
 	case 'add':
-		if (textfieldid != '') {
-			Ext.Msg.alert('提示', '添加生产计划不能指定编号');
-			return;
-		}
 		if (textfieldtitle == '' || textfieldpdocid == '' || textfieldnum == '' || textfieldenddate == '') {
 			Ext.Msg.alert('提示', '添加生产计划必须填写标题、工艺编号，生产数量和完成日期');
 			return;

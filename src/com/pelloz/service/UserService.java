@@ -13,5 +13,7 @@ public interface UserService extends POService<UserInfo>{
 	public List<UserInfo> find(String paramname, Object param) throws NoSuchPOException;
 
 	public List<UserInfo> findLike(String paramname, String param) throws NoSuchPOException;
+
+	public List<UserInfo> findAll() throws NoSuchPOException;
 	
 }

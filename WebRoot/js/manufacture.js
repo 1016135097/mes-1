@@ -154,6 +154,9 @@ var gridFormManufacture = new Ext.FormPanel({
 				g.getSelectionModel().selectRow(0);
 			},
 			rowdblclick : function(grid, row) {
+				if (dataStoreManufacture.getAt(row).data["pdocid"] <= 0) {
+					return;
+				}
 				activePdocPanel(dataStoreManufacture.getAt(row).data["pdocid"]);
 			},
 			delay : 400
@@ -212,6 +215,7 @@ var gridFormManufacture = new Ext.FormPanel({
 			format : 'Y-m-d',
 		}, {
 			xtype : 'radiogroup',
+			style : 'padding-left: 0px',
 			id : 'manufacturemethod',
 			fieldLabel : '操作',
 			columns : 3,
