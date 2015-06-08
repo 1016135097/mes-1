@@ -1,103 +1,123 @@
 #注释 *必须* 以分号结尾;
-#请注意建表顺序;
-
+# 删除表的时候注意顺序;
 use pelloz;
 
-#创建用户表;
-create table  `userinfo`(
-	`id` INT not null auto_increment,
-	`username` VARCHAR(255) unique,
-	`password` VARCHAR(255),
-	`fullname` VARCHAR(255),
-	`department` VARCHAR(255),
-	`title` VARCHAR(255),
-	primary key (`id`));
+DROP TABLE IF EXISTS `plan`;
+DROP TABLE IF EXISTS `orderform`;
+DROP TABLE IF EXISTS `bom`;
+DROP TABLE IF EXISTS `pdoc`;
+DROP TABLE IF EXISTS `tooling`;
+DROP TABLE IF EXISTS `userinfo`;
 
-#创建工具表;
-create table `tooling`(
-	`id` INT not null auto_increment,
-	`name` VARCHAR(255) unique,
-	`amount` INT not null,
-	primary key (`id`));
+# 表的结构 `orderform`;
 
-#创建订单表;
-create table `orderform`(
-	`id` INT not null auto_increment,
-	`title` VARCHAR(255),
-	`amount` INT not null,
-	`price` DOUBLE not null,
-	`date` DATE,
-	`tooling_id` INT,
-	`userinfo_id` INT,
-	primary key (`id`));
+CREATE TABLE IF NOT EXISTS `orderform` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `amount` int(11) NOT NULL,
+  `price` double NOT NULL,
+  `date` date DEFAULT NULL,
+  `isComplete` bit(1) NOT NULL,
+  `tooling_id` int(11) DEFAULT NULL,
+  `userinfo_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_omm3he0p8gfxqbn34a5d27blj` (`tooling_id`),
+  KEY `FK_d4ov430b62mkvh944v6210h2h` (`userinfo_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-alter table `orderform`  
-	add index `FK_d4ov430b62mkvh944v6210h2h`(`userinfo_id`), 
-	add constraint `FK_d4ov430b62mkvh944v6210h2h` 
-	foreign key (`userinfo_id`) 
-	references `userinfo`(`id`);
-alter table `orderform`  
-	add index `FK_omm3he0p8gfxqbn34a5d27blj`(`tooling_id`), 
-	add constraint `FK_omm3he0p8gfxqbn34a5d27blj` 
-	foreign key (`tooling_id`) 
-	references `tooling`(`id`);
 
-#创建工艺文件表;
-create table `pdoc`(
-	`id` INT not null auto_increment,
-	`title` VARCHAR(255) unique,
-	`content` LONGTEXT,
-	`userinfo_id` INT,
-	primary key (`id`));
+# 表的结构 `plan`;
 
-alter table `pdoc`  
-	add index `FK_kf77tk64lvmve4etby12icdhb`(`userinfo_id`), 
-	add constraint `FK_kf77tk64lvmve4etby12icdhb` 
-	foreign key (`userinfo_id`) 
-	references `userinfo`(`id`);
+CREATE TABLE IF NOT EXISTS `plan` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `num` int(11) NOT NULL,
+  `endDate` date DEFAULT NULL,
+  `isOnPlan` bit(1) NOT NULL,
+  `isOnProducting` bit(1) NOT NULL,
+  `isComplete` bit(1) NOT NULL,
+  `pdoc_id` int(11) DEFAULT NULL,
+  `userinfo_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_mlajc44o8r0mb31so0tl3tljw` (`pdoc_id`),
+  KEY `FK_oq2lolvyl15qe4pfeerq6au9u` (`userinfo_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-#创建生产计划表;
-create table `pelloz`.`plan`(
-	`id` INT not null auto_increment,
-	`title` VARCHAR(255),
-	`num` INT not null,
-	`enddate` DATE,
-	`isOnPlan` BIT not null,
-	`isOnProducting` BIT not null,
-	`pdoc_id` INT,
-	`userinfo_id` INT,
-	primary key (`id`)
-    );
 
-alter table `pelloz`.`plan`  
-	add index `FK_ismm3fsl8kwlge2lo1pao1967`(`userinfo_id`), 
-	add constraint `FK_ismm3fsl8kwlge2lo1pao1967` 
-	foreign key (`userinfo_id`) 
-	references `pelloz`.`userinfo`(`id`);
-alter table `pelloz`.`plan`  
-	add index `FK_rv4krkew51moohu9sh0gj9pbw`(`pdoc_id`), 
-	add constraint `FK_rv4krkew51moohu9sh0gj9pbw` 
-	foreign key (`pdoc_id`) 
-	references `pelloz`.`pdoc`(`id`);
+# 表的结构 `pdoc`;
 
-#创建BOM表;
-create table `bom`(
-	`id` INT not null auto_increment,
-	`amount` INT not null,
-	`pdoc_id` INT,
-	`tooling_id` INT,
-	primary key (`id`));
+CREATE TABLE IF NOT EXISTS `pdoc` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `content` longtext,
+  `userinfo_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_hxvs0cdnutcksojp1el35a9k1` (`title`),
+  KEY `FK_kf77tk64lvmve4etby12icdhb` (`userinfo_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-alter table `bom`  
-	add index `FK_h0x6234we9hgaialfl4ostpf5`(`pdoc_id`), 
-	add constraint `FK_h0x6234we9hgaialfl4ostpf5` 
-	foreign key (`pdoc_id`) 
-	references `pdoc`(`id`);
-alter table `bom`  
-	add index `FK_tl85yroudlrbwb0d0i7ckmd3a`(`tooling_id`), 
-	add constraint `FK_tl85yroudlrbwb0d0i7ckmd3a` 
-	foreign key (`tooling_id`) 
-	references `tooling`(`id`);
 
-#创建表结束;
+# 表的结构 `bom`;
 
+CREATE TABLE IF NOT EXISTS `bom` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `amount` int(11) NOT NULL,
+  `pdoc_id` int(11) DEFAULT NULL,
+  `tooling_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_h0x6234we9hgaialfl4ostpf5` (`pdoc_id`),
+  KEY `FK_tl85yroudlrbwb0d0i7ckmd3a` (`tooling_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+
+# 表的结构 `tooling`;
+
+CREATE TABLE IF NOT EXISTS `tooling` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `amount` int(11) NOT NULL,
+  `needPurchase` bit(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_r6reckbln8m1k8fddxvwvkoeh` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+
+# 表的结构 `userinfo`;
+
+CREATE TABLE IF NOT EXISTS `userinfo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `fullname` varchar(255) DEFAULT NULL,
+  `department` varchar(255) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_45fvrme4q2wy85b1vbf55hm6s` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+
+# 限制表 `bom`;
+
+ALTER TABLE `bom`
+  ADD CONSTRAINT `FK_tl85yroudlrbwb0d0i7ckmd3a` FOREIGN KEY (`tooling_id`) REFERENCES `tooling` (`id`),
+  ADD CONSTRAINT `FK_h0x6234we9hgaialfl4ostpf5` FOREIGN KEY (`pdoc_id`) REFERENCES `pdoc` (`id`);
+
+
+# 限制表 `orderform`;
+
+ALTER TABLE `orderform`
+  ADD CONSTRAINT `FK_d4ov430b62mkvh944v6210h2h` FOREIGN KEY (`userinfo_id`) REFERENCES `userinfo` (`id`),
+  ADD CONSTRAINT `FK_omm3he0p8gfxqbn34a5d27blj` FOREIGN KEY (`tooling_id`) REFERENCES `tooling` (`id`);
+
+
+# 限制表 `pdoc`;
+
+ALTER TABLE `pdoc`
+  ADD CONSTRAINT `FK_kf77tk64lvmve4etby12icdhb` FOREIGN KEY (`userinfo_id`) REFERENCES `userinfo` (`id`);
+
+
+# 限制表 `plan`;
+
+ALTER TABLE `plan`
+  ADD CONSTRAINT `FK_oq2lolvyl15qe4pfeerq6au9u` FOREIGN KEY (`userinfo_id`) REFERENCES `userinfo` (`id`),
+  ADD CONSTRAINT `FK_mlajc44o8r0mb31so0tl3tljw` FOREIGN KEY (`pdoc_id`) REFERENCES `pdoc` (`id`);

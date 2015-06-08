@@ -274,7 +274,7 @@ public class ProcessDocController {
 			this.pdocService.delete(pdoc);
 			resp.getWriter().print("{ success: true, infos:{} }");
 		} catch (NoSuchPOException | ObjectNotFoundException e1) {
-			resp.getWriter().print("{ success: false, infos:{info: '提交的工艺文件编号不存在'} }");
+			resp.getWriter().print("{ success: false, infos:{info: '提交的工艺文件编号不存在或者工艺文件已经有生产计划关联，不能删除'} }");
 			return;
 		}
 

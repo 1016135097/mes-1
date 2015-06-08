@@ -263,6 +263,18 @@ public class BOMController {
 	 * @param resp
 	 */
 	private void returnXML(Set<BOM> boms, HttpServletResponse resp) {
+		
+		if (boms == null || boms.size() == 0) {
+			Tooling tooling = new Tooling();
+			BOM bom = new BOM();
+			tooling.setId(-1);
+			tooling.setName("错误:找不到对应的工艺文件，可能本工艺已经删除");
+			bom.setTooling(tooling);
+			boms = new HashSet<BOM>();
+			boms.add(bom);
+		}
+		
+		
 		// 生成XML
 		Document document = DocumentHelper.createDocument();
 		Element rootboms = document.addElement("boms");

@@ -62,17 +62,23 @@ body {
 						<td style="color:red;">
 							<%
 								String msg = request.getParameter("loginmsg");
-								if (msg != null) {
-									switch (msg) {
-										case "-1" :
-											out.print("密码不正确");
-											break;
-										case "-2" :
-											out.print("账号不存在");
-											break;
-										default :
-											break;
+								int intmsg = 0;
+								try{
+									if(msg != null || msg != ""){
+										intmsg = Integer.parseInt(msg);
 									}
+								}catch(NumberFormatException e){
+									intmsg = 0;
+								}
+								switch (intmsg) {
+									case -1 :
+										out.print("密码不正确");
+										break;
+									case -2 :
+										out.print("账号不存在");
+										break;
+									default :
+										break;
 								}
 							%>
 						</td>

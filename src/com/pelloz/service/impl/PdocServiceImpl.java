@@ -8,10 +8,12 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import com.pelloz.dao.PdocDao;
+import com.pelloz.dao.PlanDao;
 import com.pelloz.exception.NoSuchPOException;
 import com.pelloz.exception.POExistException;
 import com.pelloz.po.BOM;
 import com.pelloz.po.Pdoc;
+import com.pelloz.po.Plan;
 import com.pelloz.service.PdocService;
 
 /**
@@ -25,6 +27,9 @@ public class PdocServiceImpl implements PdocService {
 
 	@Resource
 	private PdocDao pdocDao;
+	
+	@Resource
+	private PlanDao planDao;
 
 	@Override
 	public void add(Pdoc pdoc) throws POExistException {
@@ -39,11 +44,8 @@ public class PdocServiceImpl implements PdocService {
 	@Override
 	public void delete(Pdoc pdoc) throws NoSuchPOException {
 
-		Pdoc pdoctmp = this.pdocDao.get(pdoc.getId());
-		if (pdoctmp == null) {
-			throw new NoSuchPOException("要删除工艺文件不存在,id = " + pdoc.getId());
-		}
-		this.pdocDao.delete(pdoctmp);
+		this.delete(pdoc.getId());
+		
 	}
 
 	@Override
@@ -52,6 +54,10 @@ public class PdocServiceImpl implements PdocService {
 		Pdoc pdoctmp = this.pdocDao.get(id);
 		if (pdoctmp == null) {
 			throw new NoSuchPOException("要删除的工艺文件不存在,id = " + id);
+		}
+		List<Plan> plantmps = planDao.find("pdoc", pdoctmp);
+		if (plantmps != null && plantmps.size() > 0 ) {
+			throw new NoSuchPOException("要删除的工艺有生产计划关联，不能删除");
 		}
 		this.pdocDao.delete(pdoctmp);
 	}
